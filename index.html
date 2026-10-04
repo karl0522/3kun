@@ -24,7 +24,7 @@ body{display:flex;flex-direction:column}
 
 /* 对手条 */
 #opbar{position:absolute;top:calc(env(safe-area-inset-top) + 8px);left:8px;right:8px;height:48px;display:flex;align-items:center;background:linear-gradient(180deg,rgba(30,26,22,.92),rgba(18,16,13,.9));border:1px solid var(--line);border-radius:12px;padding:0 10px;z-index:10}
-.ava{width:34px;height:34px;border-radius:50%;border:2px solid var(--gold-dim);background-size:cover;background-position:center;flex-shrink:0}
+.ava{width:34px;height:34px;border-radius:50%;border:2px solid var(--gold-dim);background-size:150% auto;background-position:50% 6%;background-repeat:no-repeat;flex-shrink:0}
 .opname{margin-left:8px;font-size:12px;color:var(--ink);line-height:1.2}
 .opname small{display:block;font-size:9px;color:var(--ink-dim)}
 .hud{display:flex;align-items:center;gap:10px;margin-left:auto}
@@ -104,7 +104,7 @@ body{display:flex;flex-direction:column}
 #fme .crow .card .ability-icon .ai{width:12px;height:12px}
 #fme .crow .card.weather .row-icon{top:3px}
 #fme .crow .card.special .ability-icon{top:3px}
-/* 收纳卡 52x80 */
+/* 底部手牌扇形卡 56x84 */
 #handStack .card .pw{font-size:10px;min-width:14px;line-height:14px}
 #handStack .card .row-icon{top:22px;width:14px;height:14px}
 #handStack .card .ability-icon{display:none}
@@ -117,8 +117,9 @@ body{display:flex;flex-direction:column}
 
 /* 我方操作条 */
 #mebar{position:absolute;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom) + 100px);height:52px;display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,rgba(30,26,22,.95),rgba(16,14,12,.95));border:1px solid var(--line);border-radius:12px;padding:0 10px;z-index:10}
-#leader{width:42px;height:42px;border-radius:8px;background-size:cover;background-position:center;border:2px solid var(--gold-dim);flex-shrink:0;cursor:pointer;transition:transform .15s}
+#leader{width:42px;height:42px;border-radius:8px;background-size:150% auto;background-position:50% 6%;background-repeat:no-repeat;border:2px solid var(--gold-dim);flex-shrink:0;cursor:pointer;transition:transform .15s}
 #leader:active{transform:scale(.92)}
+#leader.ready{border-color:var(--gold);box-shadow:0 0 10px rgba(212,175,55,.6)}
 #leader.used{filter:grayscale(1) brightness(.5)}
 #mestats{margin-left:4px;font-size:10px;color:var(--ink-dim);line-height:1.4;flex:1}
 #mestats b{color:var(--ink);font-size:13px}
@@ -129,16 +130,18 @@ body{display:flex;flex-direction:column}
 #tot b{color:var(--gold);font-size:15px}
 #tot span{font-size:7px;color:var(--ink-dim)}
 
-/* 手牌收纳（右下角叠放） */
-#handStack{position:absolute;right:10px;bottom:calc(env(safe-area-inset-bottom) + 8px);height:82px;z-index:20;display:flex;justify-content:flex-end;align-items:flex-end;cursor:pointer}
-#handStack .card{width:52px;height:80px;border:1px solid rgba(255,255,255,.14);margin-left:-28px;transition:transform .2s}
-#handStack .card:first-child{margin-left:0}
-#handStack .card:last-child{box-shadow:0 0 12px rgba(212,175,55,.45)}
-#handStack:hover .card{transform:translateY(-4px)}
-#handStack .badge{position:absolute;left:-30px;bottom:30px;background:var(--gold);color:#231a05;font-size:11px;font-weight:bold;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.5)}
-#handHint{position:absolute;left:10px;bottom:calc(env(safe-area-inset-bottom) + 8px);height:82px;display:flex;align-items:center;font-size:10px;color:var(--ink-dim);z-index:19;letter-spacing:1px}
-#handHint .arrow{display:inline-block;margin-right:4px;animation:slide 1.5s infinite}
-@keyframes slide{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+/* 手牌扇形：铺满底部左侧空白区，卡牌互相叠放，点任意一张展开手牌面板 */
+#handStack{position:absolute;left:10px;right:84px;bottom:calc(env(safe-area-inset-bottom) + 8px);height:84px;z-index:20;cursor:pointer}
+#handStack .card{position:absolute;bottom:0;width:56px;height:84px;border:1px solid rgba(255,255,255,.14);transition:transform .2s}
+#handStack .card:active{transform:translateY(-6px)}
+#handStack .none{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink-dim);letter-spacing:1px;border:1px dashed rgba(255,255,255,.12);border-radius:8px}
+
+/* 弃牌堆：底部最右 */
+#discardPile{position:absolute;right:10px;bottom:calc(env(safe-area-inset-bottom) + 8px);width:60px;height:84px;z-index:20;border-radius:6px;border:1px dashed rgba(212,175,55,.45);background:rgba(0,0,0,.3);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;background-size:cover;background-position:center;background-repeat:no-repeat;overflow:hidden}
+#discardPile.has{border:1px solid var(--gold-dim)}
+#discardPile .dp-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.6))}
+#discardPile .dp-label{position:relative;font-size:10px;color:var(--ink);letter-spacing:1px;text-shadow:0 1px 2px #000}
+#discardPile .dp-count{position:relative;font-size:22px;font-weight:bold;color:var(--gold);text-shadow:0 1px 3px #000;line-height:1.2}
 
 /* ========== 手牌展开面板 ========== */
 #handPanel{position:fixed;left:0;right:0;bottom:0;z-index:100;background:linear-gradient(180deg,rgba(10,9,8,.92),rgba(16,14,12,.98));border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(8px)}
@@ -147,11 +150,34 @@ body{display:flex;flex-direction:column}
 #handPanelBar .title{font-size:13px;color:var(--gold);letter-spacing:2px}
 #handPanelBar .count{font-size:11px;color:var(--ink-dim)}
 #handClose{background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-size:11px;padding:4px 12px;border-radius:12px;cursor:pointer}
-#handCards{display:flex;gap:6px;padding:12px 26px 12px 10px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;min-height:130px;align-items:flex-end;scroll-snap-type:x proximity}
-#handCards .card{scroll-snap-align:start}
+#handCards{display:flex;gap:8px;padding:14px 26px 8px 10px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;min-height:168px;align-items:flex-end;scroll-snap-type:x proximity}
 #handCards::-webkit-scrollbar{display:none}
+#handCards .hc{flex-shrink:0;width:72px;display:flex;flex-direction:column;align-items:stretch;cursor:pointer;scroll-snap-align:start;transition:transform .15s}
+#handCards .hc.selected{transform:translateY(-10px)}
 #handCards .card{width:72px;height:104px;border:1px solid rgba(255,255,255,.15);flex-shrink:0}
-#handCards .card.selected{transform:translateY(-14px);box-shadow:0 0 16px rgba(212,175,55,.7);border-color:var(--gold)}
+#handCards .hc.selected .card{box-shadow:0 0 16px rgba(212,175,55,.7);border-color:var(--gold)}
+/* 卡牌名称（大）+ 技能名称（小） */
+.cap{margin-top:4px;text-align:center;width:100%}
+.cap .cn{font-size:13px;font-weight:bold;color:var(--ink);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cap .cn.long{font-size:11px}
+.cap .ca{font-size:9.5px;color:var(--gold-soft);line-height:1.25;min-height:12px;max-height:24px;overflow:hidden}
+#handCards .hc.selected .cap .cn{color:var(--gold)}
+/* 缺图占位卡面：阵营渐变底 + 首字 + 名称 */
+.noart{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;color:rgba(255,255,255,.88);text-shadow:0 1px 3px #000;z-index:1;overflow:hidden}
+.noart i{font-style:normal;font-weight:bold;font-size:26px;opacity:.45;line-height:1}
+.noart span{font-size:9px;margin-top:3px;text-align:center;padding:0 2px;line-height:1.15}
+#fop .noart i{font-size:15px}
+#fop .noart span{display:none}
+#fme .noart i{font-size:22px}
+#fme .noart span{font-size:8px}
+#handStack .noart i{font-size:24px}
+#handStack .noart span{display:none}
+#handCards .noart i{font-size:34px}
+#handCards .noart span{font-size:11px}
+#detailBar .noart i{font-size:30px}
+#detailBar .noart span{display:none}
+#cardModal .noart i{font-size:90px}
+#cardModal .noart span{font-size:20px;margin-top:8px}
 #handCards .card .pw{font-size:11px;min-width:16px;line-height:16px}
 
 /* 详情条 */
@@ -174,7 +200,7 @@ body{display:flex;flex-direction:column}
 #detailBar .info .n{font-size:13px;color:var(--ink);font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #detailBar .info .meta{font-size:10px;color:var(--ink-dim);margin-top:2px}
 #detailBar .info .desc{font-size:10px;color:var(--gold-soft);margin-top:3px;line-height:1.4}
-#detailBar .playBtn{background:radial-gradient(circle at 35% 30%,#d8b14a,#7a5d16);color:#231a05;font-weight:bold;font-size:12px;border:2px solid #4a3a10;border-radius:20px;padding:8px 18px;cursor:pointer;flex-shrink:0;transition:transform .15s}
+#detailBar .playBtn{background:radial-gradient(circle at 35% 30%,#e0b950,#7a5d16);color:#231a05;font-weight:bold;font-size:18px;letter-spacing:3px;border:2px solid #4a3a10;border-radius:28px;min-width:104px;min-height:52px;padding:12px 26px;cursor:pointer;flex-shrink:0;transition:transform .15s;box-shadow:0 3px 12px rgba(0,0,0,.5)}
 #detailBar .playBtn:active{transform:scale(.92)}
 #detailBar.empty{justify-content:center;color:#555;font-size:11px}
 
@@ -234,6 +260,9 @@ body{display:flex;flex-direction:column}
 
 /* 铜卡边框（原来缺失，铜卡曾经完全没有稀有度样式） */
 .card.rarity-bronze{border:1px solid rgba(255,255,255,.14)}
+#toast{z-index:600 !important}
+#cardModal .bigcard{position:relative;overflow:hidden;background-repeat:no-repeat}
+#handStack .card.special .ability-icon{display:flex;top:3px}
 
 /* ========== 待选操作提示条（战鼓/招降/伏击选行/归阵） ========== */
 #actionPrompt{position:absolute;top:calc(env(safe-area-inset-top) + 64px);left:8px;right:8px;background:rgba(20,16,10,.95);border:1px solid var(--gold);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--gold);text-align:center;z-index:15;opacity:0;pointer-events:none;transition:opacity .2s;letter-spacing:.5px}
@@ -244,9 +273,73 @@ body{display:flex;flex-direction:column}
 /* ========== 弃牌堆选择面板（归阵/领袖复活） ========== */
 #discardPanel{position:fixed;left:0;right:0;bottom:0;z-index:110;background:linear-gradient(180deg,rgba(10,9,8,.94),rgba(16,14,12,.99));border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding:14px 10px calc(env(safe-area-inset-bottom) + 14px)}
 #discardPanel.open{transform:translateY(0)}
-#discardPanel .dtitle{font-size:13px;color:var(--gold);margin-bottom:10px;text-align:center;letter-spacing:1px}
-#discardCards{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-#discardCards .card{width:64px;height:92px;flex-shrink:0;border:1px solid rgba(255,255,255,.15)}
+#discardPanel .dhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 4px}
+#discardPanel .dtitle{font-size:13px;color:var(--gold);letter-spacing:1px}
+#discardClose{background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-size:12px;padding:5px 16px;border-radius:14px;cursor:pointer}
+#discardCards{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 4px;-webkit-overflow-scrolling:touch;touch-action:pan-x;min-height:120px}
+#discardCards .dc{flex-shrink:0;width:72px;cursor:pointer}
+#discardCards .card{width:72px;height:104px;flex-shrink:0;border:1px solid rgba(255,255,255,.15)}
+#discardCards .dempty{width:100%;text-align:center;color:var(--ink-dim);font-size:12px;padding:36px 0}
+#discardCards .noart i{font-size:28px}
+#discardCards .noart span{font-size:9px}
+
+/* ========== 领袖技能确认弹窗 ========== */
+#leaderModal{position:fixed;inset:0;z-index:210;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;background:rgba(0,0,0,.78);backdrop-filter:blur(4px)}
+#leaderModal.show{opacity:1;pointer-events:auto}
+#leaderModal .box{background:linear-gradient(180deg,#1a1612,#0e0c0a);border:1px solid var(--gold-dim);border-radius:14px;padding:16px;max-width:320px;width:84%;text-align:center}
+#leaderModal .lport{width:132px;height:176px;margin:0 auto 10px;border-radius:10px;border:2px solid var(--gold);box-shadow:0 0 18px rgba(212,175,55,.35);background-size:cover;background-position:center top;position:relative;overflow:hidden}
+#leaderModal .lname{font-size:18px;font-weight:bold;color:var(--ink)}
+#leaderModal .lfac{font-size:11px;color:var(--ink-dim);margin:2px 0 10px}
+#leaderModal .lskill{font-size:15px;color:var(--gold);font-weight:bold;margin-bottom:4px}
+#leaderModal .ldesc{font-size:12px;color:var(--gold-soft);line-height:1.6;margin-bottom:4px}
+#leaderModal .lnote{font-size:11px;color:var(--ink-dim);min-height:16px;margin-bottom:12px}
+#leaderModal .lbtns{display:flex;gap:10px;justify-content:center}
+#leaderModal button{font-size:15px;font-weight:bold;padding:11px 0;border-radius:24px;cursor:pointer;flex:1;letter-spacing:2px}
+#leaderUse{background:radial-gradient(circle at 35% 30%,#e0b950,#7a5d16);color:#231a05;border:2px solid #4a3a10}
+#leaderUse:disabled{background:#2a2622;color:#776f60;border-color:#3a352e;cursor:not-allowed}
+#leaderCancel{background:transparent;color:var(--gold);border:1px solid var(--gold-dim)}
+
+/* ========== 选择牌组界面 ========== */
+#deckScreen{position:fixed;inset:0;z-index:490;background:radial-gradient(ellipse at 50% 0%,#2a2318 0%,#12100d 55%,#080706 100%);display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 8px) 12px calc(env(safe-area-inset-bottom) + 10px);transition:opacity .3s}
+#deckScreen.hide{opacity:0;pointer-events:none}
+#deckScreen .dk-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+#deckScreen .dk-title{font-size:17px;font-weight:bold;color:var(--gold);letter-spacing:4px}
+#dkBack{background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-size:12px;padding:5px 12px;border-radius:14px;cursor:pointer}
+#deckScreen .dk-headsp{width:56px}
+#dkFactions{display:flex;gap:8px;margin-bottom:8px}
+#dkFactions .fchip{flex:1;text-align:center;padding:9px 0;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(20,18,15,.8);color:var(--ink-dim);font-size:14px;font-weight:bold;letter-spacing:2px;cursor:pointer}
+#dkFactions .fchip.on{border-color:var(--gold);background:rgba(212,175,55,.12);color:var(--gold);box-shadow:0 0 10px rgba(212,175,55,.2)}
+#dkLeader{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:rgba(20,18,15,.7);margin-bottom:8px}
+#dkLeader .lav{width:44px;height:44px;border-radius:50%;border:2px solid var(--gold-dim);background-size:150% auto;background-position:50% 6%;background-repeat:no-repeat;flex-shrink:0}
+#dkLeader .linfo{min-width:0}
+#dkLeader .ln{font-size:13px;color:var(--ink);font-weight:bold}
+#dkLeader .ls{font-size:10.5px;color:var(--gold-soft);line-height:1.4;margin-top:2px}
+#dkStat{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--ink-dim);margin-bottom:6px}
+#dkStat b{color:var(--gold);font-size:15px}
+#dkStat .bad{color:#e66}
+#dkFilters{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto;scrollbar-width:none}
+#dkFilters .ft{flex-shrink:0;padding:5px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.12);color:var(--ink-dim);font-size:12px;cursor:pointer}
+#dkFilters .ft.on{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.1)}
+#dkGrid{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px;align-content:start;padding:2px 0 8px}
+.dk-cell{position:relative;cursor:pointer}
+.dk-cell .dk-art{position:relative;width:100%;aspect-ratio:3/4;border-radius:6px;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,.15);overflow:hidden;opacity:.55;transition:opacity .15s,transform .15s}
+.dk-cell.sel .dk-art{opacity:1;border:2px solid var(--gold);box-shadow:0 0 10px rgba(212,175,55,.5)}
+.dk-cell.hero .dk-art{border-color:#e8c84a}
+.dk-cell .dpw{position:absolute;left:3px;top:3px;min-width:18px;text-align:center;background:rgba(0,0,0,.78);color:#fff;font-size:12px;font-weight:bold;line-height:17px;border-radius:4px;border:1px solid rgba(255,255,255,.25);z-index:3}
+.dk-cell.hero .dpw{color:#000;background:linear-gradient(135deg,#f0d860,#c8a030);border-color:#8a6d2f}
+.dk-cell .dri{position:absolute;left:3px;top:23px;width:15px;height:15px;z-index:3}
+.dk-cell .dri img{width:100%;height:100%;display:block}
+.dk-cell .dchk{position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;background:var(--gold);color:#231a05;font-size:12px;font-weight:bold;line-height:18px;text-align:center;z-index:4;display:none}
+.dk-cell.sel .dchk{display:block}
+.dk-cell .dn{font-size:11.5px;color:var(--ink);font-weight:bold;text-align:center;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dk-cell .da{font-size:9px;color:var(--gold-soft);text-align:center;line-height:1.2;min-height:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dk-cell .noart i{font-size:26px}
+.dk-cell .noart span{font-size:9px}
+#deckScreen .dk-foot{display:flex;gap:8px;padding-top:8px}
+#deckScreen .dk-foot button{border-radius:24px;font-weight:bold;cursor:pointer;font-size:13px;padding:12px 0}
+#dkAuto,#dkClear{flex:1;background:transparent;color:var(--gold);border:1px solid var(--gold-dim)}
+#dkStart{flex:2;background:linear-gradient(135deg,#d8b14a,#7a5d16);color:#231a05;border:2px solid #4a3a10;font-size:16px !important;letter-spacing:3px}
+#dkStart:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -261,7 +354,17 @@ body{display:flex;flex-direction:column}
 		<div class="diffBtn on" data-diff="normal"><span class="dtag">普通</span><div class="dname">酒馆常客</div><div class="ddesc">AI 优先高战力牌，合理使用天气和特殊牌</div></div>
 		<div class="diffBtn" data-diff="hard"><span class="dtag">困难</span><div class="dname">高阶玩家</div><div class="ddesc">AI 计算最优出牌，精确控制天气/烧灼/诱饵时机</div></div>
 	</div>
-	<button id="startBtn">开始对局</button>
+	<button id="startBtn">下一步：选择牌组</button>
+</div>
+<!-- 选择牌组界面 -->
+<div id="deckScreen" class="hide">
+	<div class="dk-head"><button id="dkBack">‹ 返回</button><div class="dk-title">选择牌组</div><span class="dk-headsp"></span></div>
+	<div id="dkFactions"></div>
+	<div id="dkLeader"></div>
+	<div id="dkStat"></div>
+	<div id="dkFilters"></div>
+	<div id="dkGrid"></div>
+	<div class="dk-foot"><button id="dkAuto">推荐牌组</button><button id="dkClear">清空</button><button id="dkStart">开始对局</button></div>
 </div>
 <!-- 结算界面 -->
 <div id="endScreen"><div class="result" id="endResult">胜利</div><div class="rounds" id="endRounds">比分 2:0</div><button class="restartBtn" id="restartBtn">再来一局</button></div>
@@ -278,8 +381,8 @@ body{display:flex;flex-direction:column}
 		<div id="pass">过牌</div>
 		<div id="tot"><b>0</b><span>总战力</span></div>
 	</div>
-	<div id="handHint"><span class="arrow">→</span>点击手牌</div>
 	<div id="handStack"></div>
+	<div id="discardPile"></div>
 </div>
 
 <div id="mask"></div>
@@ -294,8 +397,20 @@ body{display:flex;flex-direction:column}
 </div>
 
 <div id="discardPanel">
-	<div class="dtitle" id="discardTitle">选择一张单位</div>
+	<div class="dhead"><div class="dtitle" id="discardTitle">选择一张单位</div><button id="discardClose">关闭</button></div>
 	<div id="discardCards"></div>
+</div>
+
+<div id="leaderModal">
+	<div class="box">
+		<div class="lport" id="leaderPort"></div>
+		<div class="lname" id="leaderName"></div>
+		<div class="lfac" id="leaderFac"></div>
+		<div class="lskill" id="leaderSkill"></div>
+		<div class="ldesc" id="leaderDesc"></div>
+		<div class="lnote" id="leaderNote"></div>
+		<div class="lbtns"><button id="leaderCancel">取消</button><button id="leaderUse">确认使用</button></div>
+	</div>
 </div>
 
 <div id="cardModal">
@@ -342,8 +457,39 @@ function abilityDesc(card){
 	var parts = card.ability.split(' ').map(function(k){ return ABILITY[k]||k; });
 	return parts.join('；');
 }
-function imgSm(card){ return "img/sanguo/"+card.filename+".png"; }
-function imgLg(card){ return "img/sanguo/"+card.filename+".png"; }
+// 游戏内用 288x384 小图，点开详情用 576x768 中图（原图 1152x1536 PNG 约 450KB/张，手机上会加载很慢，仍保留在 img/sanguo/ 作为素材源）
+function imgSm(card){ return "img/sanguo-sm/"+card.filename+".webp"; }
+function imgLg(card){ return "img/sanguo-md/"+card.filename+".webp"; }
+
+// 目前还没有卡图的卡牌（31 张）：用阵营色渐变 + 首字 + 名称做占位卡面。补图后从这里删掉对应名字，并把图放进 img/sanguo/ 后重新生成 sm/md 小图。
+var NO_ART = {};
+"袁术,公孙瓒,卢植,蔡邕,关羽,魏延,华雄,董卓,李儒,蜀汉重步,曹魏探马,于禁,黄巾水卒,南蛮酋长,臧霸,曹性,蜀地幕僚,蜀汉盾兵,黄巾斥侯,黄巾蛮夫,南蛮部族兵,西凉铁骑,洛阳流民,长安民兵,羽林弓手,缇骑,郝萌,侯选,成廉,魏续,宋宪".split(',').forEach(function(n){ NO_ART[n]=1; });
+var FACTION_BG = {
+	shuhan:['#1f4a2c','#0d2214'], caowei:['#1d3a63','#0b182b'], dongwu:['#6b2420','#2a0e0c'],
+	huangjin:['#7a6314','#2e2606'], qunxiong:['#5a3a1c','#22150a'], hanting:['#4d2a63','#1e0f28'],
+	leader:['#5a4a1c','#221c0a'], special:['#3a2a55','#150f22'], weather:['#1f4a63','#0b1f2b']
+};
+function artStyle(card, size){
+	var bg = FACTION_BG[card.deck] || FACTION_BG.hanting;
+	var grad = 'linear-gradient(160deg,'+bg[0]+','+bg[1]+')';
+	if(NO_ART[card.filename]) return 'background-image:'+grad;
+	// 图片加载中/失败时露出渐变底色，而不是一块空白
+	return "background-image:url('"+(size==='md'?imgLg(card):imgSm(card))+"'),"+grad;
+}
+function artName(card){
+	return NO_ART[card.filename] ? '<div class="noart"><i>'+card.name.charAt(0)+'</i><span>'+card.name+'</span></div>' : '';
+}
+var ABILITY_NAME = {hero:'猛将',bond:'同袍呼应',medic:'归阵',spy:'卧底',horn:'战鼓',scorch:'烧灼',frost:'寒潮',fog:'大雾',rain:'暴雨',skellestorm:'海上狂风',clear:'放晴',decoy:'招降',muster:'死士',morale:'士气大振',mardroeme:'蛮巫祭礼',purify:'净化',agile:'伏击'};
+function abilityNames(card){
+	var out = [];
+	if(card.ability){ card.ability.split(' ').forEach(function(k){ if(ABILITY_NAME[k]) out.push(ABILITY_NAME[k]); }); }
+	if(card.row==='agile') out.push('灵活');
+	return out;
+}
+function capHTML(card){
+	var ab = abilityNames(card);
+	return '<div class="cap"><div class="cn'+(card.name.length>5?' long':'')+'">'+card.name+'</div><div class="ca">'+(ab.length?ab.join('·'):'')+'</div></div>';
+}
 function isUnit(card){ return !!card.row && card.deck!=='weather' && card.deck!=='special'; }
 function isHero(card){ return card.ability && card.ability.indexOf('hero')>=0; }
 function rarityClass(card){
@@ -445,14 +591,14 @@ function computeSidePower(field, weatherRows, hornFlags){
 }
 
 function renderOpBar(){
-	var op = findCard("曹操");
+	var op = S.aiLeader || findCard("曹操");
 	var gemsHtml = '';
 	for(var gi=0;gi<2;gi++){ gemsHtml += '<div class="gem'+(gi<S.aiGems?' on':'')+'"></div>'; }
 	var total = computeSidePower(S.aiField, S.weatherRows, S.aiHorn).total;
-	var html = '<div class="ava" style="background-image:url(\''+imgSm(op)+'\')"></div>'
-		+'<div class="opname">曹操<small>曹魏</small></div>'
+	var html = '<div class="ava" style="'+artStyle(op,'sm')+'"></div>'
+		+'<div class="opname">'+op.name+'<small>'+factionName(S.aiFaction)+'</small></div>'
 		+'<div class="hud">'
-		+'<div class="it score"><b>'+total+'</b>总分</div>'
+		+'<div class="it score"><b>'+total+'</b>总战力</div>'
 		+'<div class="it"><b>'+S.aiHand.length+'</b>手牌</div>'
 		+'<div class="it"><b>第'+S.round+'局</b></div>'
 		+'<div class="gems">'+gemsHtml+'</div>'
@@ -473,7 +619,8 @@ function renderField(containerId, field, isMe){
 			var cardPickable = isMe && S.pending && S.pending.kind==='decoy' && !isHero(card);
 			var cls = 'card '+(cardPickable?'pickable ':'')+(isHero(card)?'hero ':'')+rarityClass(card)+(card._just?' just-played':'');
 			var icons = rowIconHTML(card.row) + abilityIconHTML(card.ability);
-			html += '<div class="'+cls+'" data-name="'+card.name+'" style="background-image:url(\''+imgSm(card)+'\')">'
+			html += '<div class="'+cls+'" data-name="'+card.name+'" style="'+artStyle(card,'sm')+'">'
+				+artName(card)
 				+'<div class="pw">'+pw+'</div>'
 				+icons+'</div>';
 		});
@@ -493,33 +640,57 @@ function renderWeather(){
 		if(w && !seen[w.id]){ seen[w.id]=true; cards.push(w); }
 	});
 	c.innerHTML = cards.map(function(w){
-		return '<div class="wcard" data-id="'+w.id+'" style="background-image:url(\''+imgSm(w)+'\')" title="'+zhName(w)+'"></div>';
+		return '<div class="wcard" data-id="'+w.id+'" style="'+artStyle(w,'sm')+'" title="'+zhName(w)+'"></div>';
 	}).join('');
 }
 
 function renderMeBar(){
-	document.getElementById('leader').style.backgroundImage = "url('"+imgSm(S.leader)+"')";
-	document.getElementById('leader').className = S.leaderUsed?'used':'';
-	document.getElementById('mestats').innerHTML = zhName(S.leader)+' · 蜀汉<br>牌库 <b>'+MY_DECK_POOL.length+'</b> &nbsp; 手牌 <b>'+S.hand.length+'</b>';
+	var lead = document.getElementById('leader');
+	lead.setAttribute('style', artStyle(S.leader,'sm'));
+	lead.className = S.leaderUsed ? 'used' : (leaderCanUse('me') ? 'ready' : '');
+	document.getElementById('mestats').innerHTML = zhName(S.leader)+' · '+factionName(S.faction)+'<br>牌库 <b>'+MY_DECK_POOL.length+'</b> &nbsp; 手牌 <b>'+S.hand.length+'</b>';
 	document.getElementById('tot').innerHTML = '<b>'+computeSidePower(S.meField, S.weatherRows, S.meHorn).total+'</b><span>总战力</span>';
 	var pass = document.getElementById('pass');
 	pass.textContent = S.mePassed?'已过':'过牌';
 	pass.className = S.mePassed?'passed':'';
 }
 
+function handCls(card){
+	return 'card '+(isHero(card)?'hero ':'')+(card.deck==='special'?'special ':'')+(card.deck==='weather'?'weather ':'')+rarityClass(card);
+}
+function cardIcons(card){
+	return card.deck==='weather' ? weatherIconHTML(card) : rowIconHTML(card.row) + abilityIconHTML(card.ability);
+}
+
+// 手牌扇形：铺满底部左侧空白区，卡多时自动压缩间距，保证全部手牌都能看到
 function renderHandStack(){
 	var c = document.getElementById('handStack');
-	// 只显示最后4张叠放
-	var show = S.hand.slice(-4);
-	var html = '<div class="badge">'+S.hand.length+'</div>';
-	show.forEach(function(card){
-		var icons = rowIconHTML(card.row) + abilityIconHTML(card.ability);
-		if(card.deck==='weather') icons = weatherIconHTML(card);
-		html += '<div class="card '+rarityClass(card)+'" style="background-image:url(\''+imgSm(card)+'\')">'
+	var n = S.hand.length;
+	if(!n){ c.innerHTML = '<div class="none">暂无手牌</div>'; return; }
+	var W = c.clientWidth || 280, cw = 56;
+	var step = n>1 ? Math.min(cw+4, (W-cw)/(n-1)) : 0;
+	var html = '';
+	S.hand.forEach(function(card, i){
+		html += '<div class="'+handCls(card)+'" data-idx="'+i+'" style="left:'+Math.round(i*step)+'px;'+artStyle(card,'sm')+'">'
+			+artName(card)
 			+(card.strength?'<div class="pw">'+card.strength+'</div>':'')
-			+icons+'</div>';
+			+cardIcons(card)+'</div>';
 	});
 	c.innerHTML = html;
+}
+
+// 弃牌堆：底部最右，显示最上面一张和数量
+function renderDiscardPile(){
+	var el = document.getElementById('discardPile');
+	var n = S.meDiscard.length;
+	if(!n){
+		el.className = ''; el.removeAttribute('style');
+		el.innerHTML = '<span class="dp-label">弃牌堆</span><span class="dp-count">0</span>';
+		return;
+	}
+	var top = S.meDiscard[n-1];
+	el.className = 'has'; el.setAttribute('style', artStyle(top,'sm'));
+	el.innerHTML = artName(top)+'<div class="dp-shade"></div><span class="dp-label">弃牌堆</span><span class="dp-count">'+n+'</span>';
 }
 
 function renderHandPanel(){
@@ -528,12 +699,12 @@ function renderHandPanel(){
 	var html = '';
 	S.hand.forEach(function(card, i){
 		var sel = S.selected===i?' selected':'';
-		var cls = 'card '+(isHero(card)?'hero ':'')+(card.deck==='special'?'special ':'')+(card.deck==='weather'?'weather ':'')+rarityClass(card)+sel;
-		var icons = rowIconHTML(card.row) + abilityIconHTML(card.ability);
-		if(card.deck==='weather') icons = weatherIconHTML(card);
-		html += '<div class="'+cls+'" data-idx="'+i+'" style="background-image:url(\''+imgSm(card)+'\')">'
+		html += '<div class="hc'+sel+'" data-idx="'+i+'">'
+			+'<div class="'+handCls(card)+'" style="'+artStyle(card,'sm')+'">'
+			+artName(card)
 			+(card.strength?'<div class="pw">'+card.strength+'</div>':'')
-			+icons+'</div>';
+			+cardIcons(card)+'</div>'
+			+capHTML(card)+'</div>';
 	});
 	c.innerHTML = html;
 	renderDetailBar();
@@ -550,7 +721,8 @@ function renderDetailBar(){
 	var rk = rarityKey(card);
 	var thumbIcons = rowIconHTML(card.row) + abilityIconHTML(card.ability);
 	if(card.deck==='weather') thumbIcons = weatherIconHTML(card);
-	bar.innerHTML = '<div class="thumb '+rk+'" style="background-image:url(\''+imgSm(card)+'\')">'
+	bar.innerHTML = '<div class="thumb '+rk+'" style="'+artStyle(card,'sm')+'">'
+		+artName(card)
 		+(card.strength?'<div class="tpw">'+card.strength+'</div>':'')
 		+thumbIcons
 		+'<div class="tname">'+zhName(card)+'</div></div>'
@@ -567,6 +739,7 @@ function render(){
 	renderWeather();
 	renderMeBar();
 	renderHandStack();
+	renderDiscardPile();
 	if(document.getElementById('handPanel').classList.contains('open')) renderHandPanel();
 }
 
@@ -574,35 +747,43 @@ function render(){
 var panel = document.getElementById('handPanel');
 var mask = document.getElementById('mask');
 
-function openPanel(){
+function openPanel(idx){
 	panel.classList.add('open'); mask.classList.add('show');
-	S.selected = null; renderHandPanel();
+	S.selected = (typeof idx==='number' && S.hand[idx]) ? idx : null;
+	renderHandPanel();
+	var sel = document.querySelector('#handCards .hc.selected');
+	if(sel) document.getElementById('handCards').scrollLeft = Math.max(0, sel.offsetLeft - 24);
 }
 function closePanel(){
 	panel.classList.remove('open'); mask.classList.remove('show');
 	S.selected = null;
 }
 
-document.getElementById('handStack').addEventListener('click', function(){ if(S.pending){ toast('请先完成当前操作'); return; } openPanel(); });
+// 点底部扇形里的任意一张手牌：展开手牌面板并直接选中那张
+document.getElementById('handStack').addEventListener('click', function(e){
+	if(S.pending){ toast('请先完成当前操作'); return; }
+	var el = e.target.closest('.card');
+	openPanel(el ? parseInt(el.dataset.idx) : undefined);
+});
 document.getElementById('handClose').addEventListener('click', closePanel);
 mask.addEventListener('click', function(){
-	if(document.getElementById('discardPanel').classList.contains('open')) return; // 归阵/领袖复活必须选一张，不允许点遮罩关闭
-	closePanel();
+	if(S.pending && S.pending.kind==='medic') return; // 归阵/领袖复活必须选一张，不允许点遮罩关闭
+	closeDiscardPanel(); closePanel();
 });
 
 // 手牌点击
 document.getElementById('handCards').addEventListener('click', function(e){
 	if(S.pending){ toast('请先完成当前操作'); return; }
-	var card = e.target.closest('.card');
-	if(!card) return;
-	var idx = parseInt(card.dataset.idx);
+	var item = e.target.closest('.hc');
+	if(!item) return;
+	var idx = parseInt(item.dataset.idx);
 	if(S.selected === idx){
 		// 再次点击 = 出牌
 		playCard(idx);
 	} else {
 		S.selected = idx;
-		document.querySelectorAll('#handCards .card').forEach(function(el){el.classList.remove('selected')});
-		card.classList.add('selected');
+		document.querySelectorAll('#handCards .hc').forEach(function(el){el.classList.remove('selected')});
+		item.classList.add('selected');
 		renderDetailBar();
 	}
 });
@@ -639,13 +820,14 @@ function playCard(idx){
 	}
 	if(card.deck==='weather'){
 		S.hand.splice(idx,1);
-		applyWeatherCard(card);
+		applyWeatherCard(card, 'me');
 		toast(card.ability==='clear' ? '放晴：移除所有天气' : '天气：'+zhName(card));
 		closePanel(); render(); afterAction();
 		return;
 	}
 	if(card.deck==='special'){
 		S.hand.splice(idx,1);
+		toDiscard('me', card);
 		closePanel();
 		if(card.ability==='horn'){ startHornPick(); return; }
 		if(card.ability==='decoy'){ startDecoyPick(); return; }
@@ -690,9 +872,26 @@ function placeUnitCard(card, row, side){
 	}
 }
 
-function applyWeatherCard(card){
-	if(card.ability==='clear'){ S.weatherRows={close:null,ranged:null,siege:null}; }
-	else if(card.ability==='frost'){ S.weatherRows.close=card; }
+// 弃牌堆记账：打出的特殊牌、被烧灼的单位、回合结束时场上的牌和天气牌都会进弃牌堆
+function toDiscard(side, card){ (side==='me'?S.meDiscard:S.aiDiscard).push(card); }
+function flushWeatherToDiscard(){
+	S.weatherLog.forEach(function(e){ toDiscard(e.side, e.card); });
+	S.weatherLog = [];
+}
+function applyWeatherCard(card, side){
+	if(card.ability==='clear'){
+		flushWeatherToDiscard();
+		toDiscard(side, card);
+		S.weatherRows = {close:null,ranged:null,siege:null};
+		return;
+	}
+	// 同类天气被新的覆盖时，旧的那张进弃牌堆
+	S.weatherLog = S.weatherLog.filter(function(e){
+		if(e.card.ability===card.ability){ toDiscard(e.side, e.card); return false; }
+		return true;
+	});
+	S.weatherLog.push({card:card, side:side});
+	if(card.ability==='frost'){ S.weatherRows.close=card; }
 	else if(card.ability==='fog'){ S.weatherRows.ranged=card; }
 	else if(card.ability==='rain'){ S.weatherRows.siege=card; }
 	else if(card.ability==='skellestorm'){ S.weatherRows.ranged=card; S.weatherRows.siege=card; }
@@ -788,7 +987,7 @@ function startMedicPick(toHandOnly){
 		return;
 	}
 	S.pending = {kind:'medic', toHand:!!toHandOnly, consumesTurn:consumesTurn};
-	renderDiscardPanel(candidates);
+	renderDiscardPanel(candidates, (S.pending.toHand? '仁德：选择复活到手牌的单位' : '归阵：选择复活上场的单位'));
 	openDiscardPanel();
 }
 function resolveMedicPick(card){
@@ -804,23 +1003,37 @@ function resolveMedicPick(card){
 
 function openDiscardPanel(){ document.getElementById('discardPanel').classList.add('open'); mask.classList.add('show'); }
 function closeDiscardPanel(){ document.getElementById('discardPanel').classList.remove('open'); mask.classList.remove('show'); }
-function renderDiscardPanel(list){
-	document.getElementById('discardTitle').textContent = (S.pending.toHand? '仁德：选择复活到手牌的单位' : '归阵：选择复活上场的单位') + '（'+list.length+'）';
+// 查看弃牌堆（只读）：点底部最右的弃牌堆
+function openDiscardView(){
+	if(S.pending){ toast('请先完成当前操作'); return; }
+	renderDiscardPanel(S.meDiscard.slice().reverse(), '我的弃牌堆');
+	openDiscardPanel();
+}
+function renderDiscardPanel(list, title){
+	var pick = !!(S.pending && S.pending.kind==='medic');
+	document.getElementById('discardTitle').textContent = title + '（'+list.length+'）';
+	document.getElementById('discardClose').style.display = pick ? 'none' : '';
 	var html = '';
 	list.forEach(function(card, i){
-		var icons = rowIconHTML(card.row) + abilityIconHTML(card.ability);
-		html += '<div class="card '+rarityClass(card)+'" data-didx="'+i+'" style="background-image:url(\''+imgSm(card)+'\')">'
-			+'<div class="pw">'+card.strength+'</div>'+icons+'</div>';
+		html += '<div class="dc" data-didx="'+i+'"><div class="'+handCls(card)+'" style="'+artStyle(card,'sm')+'">'
+			+artName(card)
+			+(card.strength?'<div class="pw">'+card.strength+'</div>':'')
+			+cardIcons(card)+'</div>'+capHTML(card)+'</div>';
 	});
+	if(!list.length) html = '<div class="dempty">弃牌堆是空的</div>';
 	var c = document.getElementById('discardCards');
 	c.innerHTML = html; c.__list = list;
 }
 document.getElementById('discardCards').addEventListener('click', function(e){
-	var el = e.target.closest('.card'); if(!el) return;
+	var el = e.target.closest('.dc'); if(!el) return;
 	var list = document.getElementById('discardCards').__list;
 	var card = list[parseInt(el.dataset.didx)];
-	if(card) resolveMedicPick(card);
+	if(!card) return;
+	if(S.pending && S.pending.kind==='medic') resolveMedicPick(card);
+	else openModal(card);
 });
+document.getElementById('discardClose').addEventListener('click', closeDiscardPanel);
+document.getElementById('discardPile').addEventListener('click', openDiscardView);
 
 // 战场点击：待选状态下用于解析战鼓/伏击/招降的目标；否则弹卡牌详情
 document.getElementById('fop').addEventListener('click', showFieldCard);
@@ -858,7 +1071,9 @@ document.getElementById('weather').addEventListener('click', function(e){
 
 // 卡牌详情浮层
 function openModal(card){
-	document.getElementById('modalCard').style.backgroundImage = "url('"+imgLg(card)+"')";
+	var mc = document.getElementById('modalCard');
+	mc.setAttribute('style', artStyle(card,'md'));
+	mc.innerHTML = artName(card);
 	document.getElementById('modalName').textContent = zhName(card);
 	var meta = '';
 	if(card.strength) meta += '<span>战力 '+card.strength+'</span>';
@@ -884,13 +1099,91 @@ document.getElementById('pass').addEventListener('click', function(){
 	afterAction();
 });
 
-// 领袖：刘备·仁德，每局一次，从弃牌堆复活1张单位到手牌（不消耗出牌机会）
+// ========== 领袖技能（每局一次，不消耗出牌机会） ==========
+// 阵营与领袖：目前可选蜀汉（刘备）和曹魏（曹操），这两位的技能已完整实现；其余领袖的技能还没做，所以暂不开放。
+var FACTIONS = {
+	shuhan:{name:'蜀汉', leader:'刘备'},
+	caowei:{name:'曹魏', leader:'曹操'}
+};
+function factionName(f){ return FACTIONS[f] ? FACTIONS[f].name : ''; }
+function isSpyUnit(c){ return isUnit(c) && c.ability && c.ability.indexOf('spy')>=0; }
+function byStrengthDesc(a,b){ return (parseInt(b.strength)||0)-(parseInt(a.strength)||0); }
+
+// 曹操·挟天子：把牌堆里战力最高的一张卧底牌直接放到对手半场
+function leaderSpyDrop(side){
+	var pool = side==='me'?MY_DECK_POOL:AI_DECK_POOL;
+	var spies = pool.filter(isSpyUnit).sort(byStrengthDesc);
+	var card = spies[0];
+	if(!card) return;
+	pool.splice(pool.indexOf(card),1);
+	card._just = true;
+	(side==='me'?S.aiField:S.meField)[card.row==='agile'?'close':card.row].push(card);
+	toast((side==='me'?'领袖技·挟天子：':'对手领袖技·挟天子：')+zhName(card)+' 混入'+(side==='me'?'对手':'你方')+'半场');
+}
+var LEADER_SKILL = {
+	'刘备': {
+		skill:'仁德',
+		detail:'从己方弃牌堆中选择1张单位牌，放回手牌。',
+		noTarget:'弃牌堆里还没有单位牌，暂时无法使用',
+		can:function(side){ return (side==='me'?S.meDiscard:S.aiDiscard).some(isUnit); },
+		useMe:function(){ S.leaderUsed = true; startMedicPick(true); },
+		aiWhen:function(){ return S.round>=2; },
+		useAi:function(){
+			var c = S.aiDiscard.filter(isUnit).sort(byStrengthDesc)[0];
+			S.aiDiscard.splice(S.aiDiscard.indexOf(c),1);
+			S.aiHand.push(c); S.aiLeaderUsed = true;
+			toast('对手领袖技·仁德：从弃牌堆召回了 '+zhName(c));
+		}
+	},
+	'曹操': {
+		skill:'挟天子',
+		detail:'从己方牌堆中取出战力最高的一张卧底牌，直接放到对手半场（卧底牌会给对手加战力，但换来优势）。',
+		noTarget:'牌堆里已经没有卧底牌了',
+		can:function(side){ return (side==='me'?MY_DECK_POOL:AI_DECK_POOL).some(isSpyUnit); },
+		useMe:function(){ S.leaderUsed = true; leaderSpyDrop('me'); },
+		aiWhen:function(){ return S.round===1; },
+		useAi:function(){ S.aiLeaderUsed = true; leaderSpyDrop('ai'); }
+	}
+};
+function leaderCanUse(side){
+	var lead = side==='me'?S.leader:S.aiLeader;
+	var used = side==='me'?S.leaderUsed:S.aiLeaderUsed;
+	var sk = lead && LEADER_SKILL[lead.name];
+	return !!(sk && !used && sk.can(side));
+}
+// 点领袖头像：先展示领袖信息与技能效果，确认后才使用；不满足条件时按钮置灰并说明原因
+function leaderBlockReason(){
+	var sk = LEADER_SKILL[S.leader.name];
+	if(S.leaderUsed) return '本局已经使用过了';
+	if(S.gameOver || S.turn!=='me' || S.mePassed) return '现在不是你的出牌回合';
+	if(!sk.can('me')) return sk.noTarget;
+	return '';
+}
+function openLeaderModal(){
+	var c = S.leader, sk = LEADER_SKILL[c.name];
+	var port = document.getElementById('leaderPort');
+	port.setAttribute('style', artStyle(c,'md'));
+	port.innerHTML = artName(c);
+	document.getElementById('leaderName').textContent = c.name;
+	document.getElementById('leaderFac').textContent = '领袖 · '+factionName(S.faction);
+	document.getElementById('leaderSkill').textContent = '「'+sk.skill+'」每局一次';
+	document.getElementById('leaderDesc').textContent = sk.detail+' 使用后不消耗你的出牌机会。';
+	var why = leaderBlockReason();
+	document.getElementById('leaderNote').textContent = why;
+	document.getElementById('leaderUse').disabled = !!why;
+	document.getElementById('leaderModal').classList.add('show');
+}
+function closeLeaderModal(){ document.getElementById('leaderModal').classList.remove('show'); }
 document.getElementById('leader').addEventListener('click', function(){
 	if(S.pending){ toast('请先完成当前操作'); return; }
-	if(S.leaderUsed){ toast('领袖能力已使用'); return; }
-	if(S.gameOver || S.turn!=='me') return;
-	S.leaderUsed = true;
-	startMedicPick(true);
+	openLeaderModal();
+});
+document.getElementById('leaderCancel').addEventListener('click', closeLeaderModal);
+document.getElementById('leaderModal').addEventListener('click', function(e){ if(e.target===this) closeLeaderModal(); });
+document.getElementById('leaderUse').addEventListener('click', function(){
+	if(leaderBlockReason()) return;
+	closeLeaderModal();
+	LEADER_SKILL[S.leader.name].useMe();
 	render();
 });
 
@@ -1048,16 +1341,12 @@ function aiResolveMedic(){
   pick._just=true; S.aiField[row].push(pick);
   toast('对手使用归阵，复活了 '+zhName(pick));
 }
-// 曹操·挟天子：每局一次，把牌堆里的一张卧底牌直接放到玩家半场（回合1自动触发一次）
+// AI 的领袖技：按各领袖技能自带的时机（曹操第1回合、刘备等弃牌堆有牌的后续回合）自动使用一次
 function aiUseLeaderIfNeeded(){
-  if(S.aiLeaderUsed || S.round!==1) return;
-  var spyCards = AI_DECK_POOL.filter(function(c){ return c.ability && c.ability.indexOf('spy')>=0; });
-  if(!spyCards.length) return;
-  var card = AI_DECK_POOL.splice(AI_DECK_POOL.indexOf(spyCards[0]),1)[0];
-  S.aiLeaderUsed = true;
-  card._just = true;
-  S.meField[card.row].push(card);
-  toast('对手领袖技·挟天子：'+zhName(card)+' 卧底混入你方半场');
+  if(!S.aiLeader || S.aiLeaderUsed) return;
+  var sk = LEADER_SKILL[S.aiLeader.name];
+  if(!sk || !sk.aiWhen() || !sk.can('ai')) return;
+  sk.useAi();
   render();
 }
 
@@ -1068,9 +1357,10 @@ function aiPlayCard(card){
     placeUnitCard(card, row, 'ai');
     return;
   } else if(card.deck==='weather'){
-    applyWeatherCard(card);
+    applyWeatherCard(card, 'ai');
     toast(card.ability==='clear' ? '对手使用：放晴' : '对手使用天气：'+zhName(card));
   } else if(card.deck==='special'){
+    toDiscard('ai', card);
     if(card.ability==='horn') aiResolveHorn();
     else if(card.ability==='decoy') aiResolveDecoy();
     else if(card.ability==='scorch'){ var v=resolveScorch(); toast(v.length? '对手使用烧灼，摧毁了 '+v.map(zhName).join('、') : '对手使用烧灼（无目标）'); }
@@ -1104,6 +1394,7 @@ function endRound(){
   else{S.meGems--;S.aiGems--;toast('第'+S.round+'回合：平局');}
   S.meDiscard = S.meDiscard.concat(fieldUnits(S.meField));
   S.aiDiscard = S.aiDiscard.concat(fieldUnits(S.aiField));
+  flushWeatherToDiscard();
   render();
   if(S.meGems<=0||S.aiGems<=0||S.round>=3){setTimeout(endGame,1500);}
   else{S.round++;setTimeout(startNewRound,1500);}
@@ -1130,20 +1421,23 @@ function endGame(){
   document.getElementById('endScreen').classList.add('show');
 }
 
+// 玩家牌组 = 选牌界面里挑的卡（按 id）；AI 牌组 = 对立阵营的推荐牌组。开局各从自己的牌组里随机抽 10 张作手牌，其余是牌堆。
 function startNewGame(){
   S.meGems=2;S.aiGems=2;S.round=1;S.gameOver=false;
   S.meField={close:[],ranged:[],siege:[]};S.aiField={close:[],ranged:[],siege:[]};
   S.weatherRows={close:null,ranged:null,siege:null};
+  S.weatherLog=[];
   S.meHorn={close:false,ranged:false,siege:false};
   S.aiHorn={close:false,ranged:false,siege:false};
   S.meDiscard=[]; S.aiDiscard=[];
   S.mePassed=false;S.aiPassed=false;S.leaderUsed=false;S.aiLeaderUsed=false;S.turn='me';S.pending=null;
   hidePrompt();
   updateTurnTagUI();
-  S.leader=findCard("刘备");
-  S.aiLeader=findCard("曹操");
-  var myAll = shuffle(buildFactionPool('shuhan'));
-  var aiAll = shuffle(buildFactionPool('caowei'));
+  S.aiFaction = S.faction==='shuhan' ? 'caowei' : 'shuhan';
+  S.leader=findCard(FACTIONS[S.faction].leader);
+  S.aiLeader=findCard(FACTIONS[S.aiFaction].leader);
+  var myAll = shuffle(S.deckIds.map(findCardById).filter(Boolean));
+  var aiAll = shuffle(recommendedDeckIds(S.aiFaction).map(findCardById).filter(Boolean));
   S.hand = myAll.splice(0,10);
   S.aiHand = aiAll.splice(0,10);
   MY_DECK_POOL = myAll;
@@ -1151,11 +1445,151 @@ function startNewGame(){
   render();
 }
 
+// ========== 选择牌组 ==========
+var DECK_RULES = {unitMin:15, specialMax:8, totalMax:30};
+S.faction = 'shuhan';
+S.deckIds = [];
+S.deckFilter = 'all';
+
+// 可选卡池：本阵营单位 + 通用特殊/天气牌（蛮巫祭礼目前没有可作用的单位，先不开放）
+function deckPool(faction){
+	return sanguo_card_dict.filter(function(c){
+		if(c.deck===faction) return true;
+		return (c.deck==='special' || c.deck==='weather') && c.ability!=='mardroeme';
+	});
+}
+function isSpecialCard(c){ return c.deck==='special' || c.deck==='weather'; }
+function sortForDeck(list){
+	return list.slice().sort(function(a,b){
+		var sa = isSpecialCard(a)?1:0, sb = isSpecialCard(b)?1:0;
+		if(sa!==sb) return sa-sb;
+		var ha = isHero(a)?0:1, hb = isHero(b)?0:1;
+		if(ha!==hb) return ha-hb;
+		return (parseInt(b.strength)||0)-(parseInt(a.strength)||0) || a.id-b.id;
+	});
+}
+// 推荐牌组：全部猛将 + 战力最高的单位凑够 22 张，再配战鼓/招降/烧灼/寒潮/大雾/放晴
+function recommendedDeckIds(faction){
+	var pool = deckPool(faction);
+	var units = sortForDeck(pool.filter(function(c){ return !isSpecialCard(c); })).slice(0,22);
+	var wantAbility = ['horn','decoy','scorch','frost','fog','clear'];
+	var specials = [];
+	wantAbility.forEach(function(ab){
+		var c = pool.find(function(x){ return isSpecialCard(x) && x.ability===ab && specials.indexOf(x)<0; });
+		if(c) specials.push(c);
+	});
+	return units.concat(specials).map(function(c){ return c.id; });
+}
+function deckCounts(){
+	var units=0, specials=0;
+	S.deckIds.forEach(function(id){ var c=findCardById(id); if(!c) return; if(isSpecialCard(c)) specials++; else units++; });
+	return {units:units, specials:specials, total:units+specials};
+}
+function saveDeck(){ try{ localStorage.setItem('3kun_deck_'+S.faction, JSON.stringify(S.deckIds)); }catch(e){} }
+function loadDeck(faction){
+	try{
+		var raw = localStorage.getItem('3kun_deck_'+faction);
+		if(raw){
+			var ids = JSON.parse(raw), valid = {};
+			deckPool(faction).forEach(function(c){ valid[c.id]=1; });
+			ids = ids.filter(function(id){ return valid[id]; });
+			if(ids.length) return ids;
+		}
+	}catch(e){}
+	return recommendedDeckIds(faction);
+}
+
+function renderDeckScreen(){
+	// 阵营
+	document.getElementById('dkFactions').innerHTML = Object.keys(FACTIONS).map(function(f){
+		return '<div class="fchip'+(S.faction===f?' on':'')+'" data-f="'+f+'">'+FACTIONS[f].name+'</div>';
+	}).join('');
+	// 领袖
+	var lead = findCard(FACTIONS[S.faction].leader), sk = LEADER_SKILL[lead.name];
+	document.getElementById('dkLeader').innerHTML = '<div class="lav" style="'+artStyle(lead,'sm')+'"></div>'
+		+'<div class="linfo"><div class="ln">领袖：'+lead.name+' · 「'+sk.skill+'」</div><div class="ls">'+lead.keyword.replace(/^[^：]*：/,'')+'</div></div>';
+	// 统计
+	var cnt = deckCounts(), rule = DECK_RULES;
+	var okUnits = cnt.units>=rule.unitMin;
+	document.getElementById('dkStat').innerHTML = '<span>已选 <b>'+cnt.total+'</b> / '+rule.totalMax+'</span>'
+		+'<span class="'+(okUnits?'':'bad')+'">单位 '+cnt.units+'（至少'+rule.unitMin+'）</span>'
+		+'<span class="'+(cnt.specials>rule.specialMax?'bad':'')+'">特殊/天气 '+cnt.specials+' / '+rule.specialMax+'</span>';
+	document.getElementById('dkStart').disabled = !(okUnits && cnt.specials<=rule.specialMax && cnt.total<=rule.totalMax);
+	// 筛选
+	var filters = [['all','全部'],['close','近战'],['ranged','远程'],['siege','攻城'],['special','特殊/天气']];
+	document.getElementById('dkFilters').innerHTML = filters.map(function(f){
+		return '<div class="ft'+(S.deckFilter===f[0]?' on':'')+'" data-ft="'+f[0]+'">'+f[1]+'</div>';
+	}).join('');
+	// 卡池
+	var chosen = {}; S.deckIds.forEach(function(id){ chosen[id]=1; });
+	var list = sortForDeck(deckPool(S.faction)).filter(function(c){
+		var f = S.deckFilter;
+		if(f==='all') return true;
+		if(f==='special') return isSpecialCard(c);
+		if(isSpecialCard(c)) return false;
+		return c.row===f || (c.row==='agile' && (f==='close'||f==='ranged'));
+	});
+	document.getElementById('dkGrid').innerHTML = list.map(function(c){
+		var ab = abilityNames(c);
+		return '<div class="dk-cell'+(chosen[c.id]?' sel':'')+(isHero(c)?' hero':'')+'" data-id="'+c.id+'">'
+			+'<div class="dk-art" style="'+artStyle(c,'sm')+'">'+artName(c)
+			+(c.strength?'<div class="dpw">'+c.strength+'</div>':'')
+			+(c.row && ROW_ICON[c.row] && !isSpecialCard(c) ? '<div class="dri"><img src="img/icons/'+ROW_ICON[c.row]+'.png" alt=""></div>' : '')
+			+'<div class="dchk">✓</div></div>'
+			+'<div class="dn">'+c.name+'</div><div class="da">'+ab.join('·')+'</div></div>';
+	}).join('');
+}
+function openDeckScreen(){
+	S.deckIds = loadDeck(S.faction);
+	renderDeckScreen();
+	document.getElementById('deckScreen').classList.remove('hide');
+}
+
+document.getElementById('dkFactions').addEventListener('click', function(e){
+	var el = e.target.closest('.fchip'); if(!el || el.dataset.f===S.faction) return;
+	S.faction = el.dataset.f;
+	S.deckIds = loadDeck(S.faction);
+	renderDeckScreen();
+});
+document.getElementById('dkFilters').addEventListener('click', function(e){
+	var el = e.target.closest('.ft'); if(!el) return;
+	S.deckFilter = el.dataset.ft;
+	renderDeckScreen();
+});
+document.getElementById('dkGrid').addEventListener('click', function(e){
+	var el = e.target.closest('.dk-cell'); if(!el) return;
+	var id = parseInt(el.dataset.id), c = findCardById(id), i = S.deckIds.indexOf(id);
+	if(i>=0){ S.deckIds.splice(i,1); }
+	else {
+		var cnt = deckCounts();
+		if(cnt.total>=DECK_RULES.totalMax){ toast('牌组最多 '+DECK_RULES.totalMax+' 张'); return; }
+		if(isSpecialCard(c) && cnt.specials>=DECK_RULES.specialMax){ toast('特殊/天气牌最多 '+DECK_RULES.specialMax+' 张'); return; }
+		S.deckIds.push(id);
+	}
+	// 只更新这一格和统计，避免整页重绘导致滚动位置跳回顶部
+	var scroller = document.getElementById('dkGrid'), top = scroller.scrollTop;
+	renderDeckScreen();
+	scroller.scrollTop = top;
+});
+document.getElementById('dkAuto').addEventListener('click', function(){ S.deckIds = recommendedDeckIds(S.faction); renderDeckScreen(); toast('已套用推荐牌组'); });
+document.getElementById('dkClear').addEventListener('click', function(){ S.deckIds = []; renderDeckScreen(); });
+document.getElementById('dkBack').addEventListener('click', function(){
+	document.getElementById('deckScreen').classList.add('hide');
+	document.getElementById('startScreen').classList.remove('hide');
+});
+document.getElementById('dkStart').addEventListener('click', function(){
+	var cnt = deckCounts();
+	if(cnt.units<DECK_RULES.unitMin){ toast('至少选择 '+DECK_RULES.unitMin+' 张单位牌'); return; }
+	saveDeck();
+	document.getElementById('deckScreen').classList.add('hide');
+	startNewGame();
+});
+
 // 开始界面事件
 document.querySelectorAll('.diffBtn').forEach(function(btn){
   btn.addEventListener('click',function(){document.querySelectorAll('.diffBtn').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');S.difficulty=btn.dataset.diff;});
 });
-document.getElementById('startBtn').addEventListener('click',function(){document.getElementById('startScreen').classList.add('hide');startNewGame();});
+document.getElementById('startBtn').addEventListener('click',function(){document.getElementById('startScreen').classList.add('hide');openDeckScreen();});
 document.getElementById('restartBtn').addEventListener('click',function(){document.getElementById('endScreen').classList.remove('show');document.getElementById('startScreen').classList.remove('hide');});
 
 // 启动（等待用户点击开始）
