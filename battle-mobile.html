@@ -551,9 +551,9 @@ function abilityDesc(card){
 function imgSm(card){ return "img/sanguo-sm/"+card.filename+".webp"; }
 function imgLg(card){ return "img/sanguo-md/"+card.filename+".webp"; }
 
-// 目前还没有卡图的卡牌（31 张）：用阵营色渐变 + 首字 + 名称做占位卡面。补图后从这里删掉对应名字，并把图放进 img/sanguo/ 后重新生成 sm/md 小图。
+// 还没有卡图的卡牌：在这里登记名字，会用阵营色渐变 + 首字 + 名称做占位卡面。目前 254 张卡已全部有图，名单为空。
+// 以后新增卡牌缺图时：NO_ART["卡名"]=1；补图后把图放进 img/sanguo/，重新生成 sm/md 小图，再删掉这一行。
 var NO_ART = {};
-"袁术,公孙瓒,卢植,蔡邕,关羽,魏延,华雄,董卓,李儒,蜀汉重步,曹魏探马,于禁,黄巾水卒,南蛮酋长,臧霸,曹性,蜀地幕僚,蜀汉盾兵,黄巾斥侯,黄巾蛮夫,南蛮部族兵,西凉铁骑,洛阳流民,长安民兵,羽林弓手,缇骑,郝萌,侯选,成廉,魏续,宋宪".split(',').forEach(function(n){ NO_ART[n]=1; });
 var FACTION_BG = {
 	shuhan:['#1f4a2c','#0d2214'], caowei:['#1d3a63','#0b182b'], dongwu:['#6b2420','#2a0e0c'],
 	huangjin:['#7a6314','#2e2606'], qunxiong:['#5a3a1c','#22150a'], hanting:['#4d2a63','#1e0f28'],
