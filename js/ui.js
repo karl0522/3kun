@@ -476,15 +476,20 @@ $('dkOpp').addEventListener('click', function (e) {
 	renderDeck();
 });
 $('dkFilters').addEventListener('click', function (e) { var el = e.target.closest('.ft'); if (el) { D.filter = el.dataset.ft; renderDeck(); $('dkGrid').scrollTop = 0; } });
-var press = { timer: null, fired: false, x: 0, y: 0 }, grid = $('dkGrid');
-grid.addEventListener('pointerdown', function (e) {
-	var el = e.target.closest('.dk-cell'); if (!el) return;
-	press.fired = false; press.x = e.clientX; press.y = e.clientY; clearTimeout(press.timer);
-	press.timer = setTimeout(function () { press.fired = true; openModal(R.BY_ID[parseInt(el.dataset.id)]); }, 480);
-});
-['pointerup', 'pointercancel', 'pointerleave'].forEach(function (t) { grid.addEventListener(t, function () { clearTimeout(press.timer); }); });
-grid.addEventListener('pointermove', function (e) { if (Math.abs(e.clientX - press.x) > 8 || Math.abs(e.clientY - press.y) > 8) clearTimeout(press.timer); });
-grid.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+// 长按卡牌看详情：长按触发后，抬手时的那次点击要吞掉，不能当成选牌/换牌
+var press = { timer: null, fired: false, x: 0, y: 0 };
+function bindLongPress(box, getDef) {
+	box.addEventListener('pointerdown', function (e) {
+		var el = e.target.closest('.dk-cell'); if (!el) return;
+		press.fired = false; press.x = e.clientX; press.y = e.clientY; clearTimeout(press.timer);
+		press.timer = setTimeout(function () { press.fired = true; var d = getDef(el); if (d) openModal(d); }, 480);
+	});
+	['pointerup', 'pointercancel', 'pointerleave'].forEach(function (t) { box.addEventListener(t, function () { clearTimeout(press.timer); }); });
+	box.addEventListener('pointermove', function (e) { if (Math.abs(e.clientX - press.x) > 8 || Math.abs(e.clientY - press.y) > 8) clearTimeout(press.timer); });
+	box.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+}
+var grid = $('dkGrid');
+bindLongPress(grid, function (el) { return R.BY_ID[parseInt(el.dataset.id)]; });
 grid.addEventListener('click', function (e) {
 	if (press.fired) { press.fired = false; return; }
 	var el = e.target.closest('.dk-cell'); if (!el) return;
@@ -540,7 +545,9 @@ function beginPlay() {
 	toast(G.turn === 'me' ? '第 1 局开始，你先手' : '第 1 局开始，对手先手');
 	if (!maybeTutorial()) scheduleAI(1400);
 }
+bindLongPress($('mulGrid'), function (el) { var inst = G && G.players.me.hand.filter(function (c) { return c.uid === parseInt(el.dataset.uid); })[0]; return inst && R.def(inst); });
 $('mulGrid').addEventListener('click', function (e) {
+	if (press.fired) { press.fired = false; return; }
 	var el = e.target.closest('.dk-cell'); if (!el || !G || G.phase !== 'mulligan') return;
 	if (G.players.me.mulligans <= 0) { toast('换牌次数已用完'); return; }
 	var had = G.players.me.hand.map(function (c) { return c.uid; });
