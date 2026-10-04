@@ -7,7 +7,7 @@ const { CARDS } = require(path.join(ROOT, 'data/cards.js'));
 const A = require(path.join(ROOT, 'data/abilities.js'));
 
 // 还没有卡图、允许暂时缺图的牌（补图后从这里删掉）
-const ART_PENDING = ['孙坚'];
+const ART_PENDING = [];
 
 const errors = [], warns = [];
 const err = m => errors.push(m), warn = m => warns.push(m);
