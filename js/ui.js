@@ -94,7 +94,7 @@ function renderOpBar() {
 	$('opbar').innerHTML = '<div class="ava" id="opAva" style="' + artStyle(L, 'sm') + (P.leaderUsed ? ';filter:grayscale(1) brightness(.6)' : '') + '"></div>'
 		+ '<div class="opname">' + L.name + '<small>' + FACTION_DEFS[P.faction].name + '</small></div>'
 		+ '<div class="hud"><div class="it score"><b>' + R.total(G, 'ai') + '</b>总战力</div>'
-		+ '<div class="it"><b>' + P.hand.length + '</b>手牌</div><div class="it"><b>第' + G.round + '局</b></div><div class="gems">' + gems + '</div></div>';
+		+ '<div class="it" style="position:relative"><b>' + P.hand.length + '</b>手牌' + opDeltaHTML() + '</div><div class="it"><b>第' + G.round + '局</b></div><div class="gems">' + gems + '</div></div>';
 }
 function renderField(id, side) {
 	var P = G.players[side], isMe = side === 'me', p = myPending();
@@ -121,7 +121,7 @@ function renderMeBar() {
 	var P = G.players.me, L = leaderDef('me'), lead = $('leader');
 	lead.setAttribute('style', artStyle(L, 'sm'));
 	lead.className = P.leaderUsed ? 'used' : (G.phase === 'play' && !G.pending && G.turn === 'me' && R.leaderCan(G, 'me') ? 'ready' : '');
-	$('mestats').innerHTML = L.name + ' · ' + FACTION_DEFS[P.faction].name + '<br>牌库 <b>' + P.deck.length + '</b> &nbsp; 手牌 <b>' + P.hand.length + '</b>';
+	$('mestats').innerHTML = L.name + ' · ' + FACTION_DEFS[P.faction].name + '<br>牌库 <b>' + P.deck.length + '</b> &nbsp; 手牌 <b id="meHandN">' + P.hand.length + '</b>';
 	$('tot').innerHTML = '<b>' + R.total(G, 'me') + '</b><span>总战力</span>';
 	var gems = ''; for (var i = 0; i < 2; i++) gems += '<i class="gem' + (i < P.gems ? ' on' : '') + '" style="display:inline-block;margin-left:2px"></i>';
 	$('mestats').innerHTML += ' &nbsp;' + gems;
@@ -134,7 +134,10 @@ function renderHandFan() {
 	var c = $('handStack'), hand = G.players.me.hand, n = hand.length;
 	if (!n) { c.innerHTML = '<div class="none">暂无手牌</div>'; return; }
 	var W = c.clientWidth || 280, cw = 56, step = n > 1 ? Math.min(cw + 4, (W - cw) / (n - 1)) : 0;
-	c.innerHTML = hand.map(function (inst, i) { return cardHTML(R.def(inst), { attr: ' data-uid="' + inst.uid + '"', style: 'left:' + Math.round(i * step) + 'px;' }); }).join('');
+	c.innerHTML = hand.map(function (inst, i) {
+		var f = freshOf(inst.uid), wait = f ? f.start - Date.now() : 0;
+		return cardHTML(R.def(inst), { cls: f ? 'fresh' + (wait > -600 ? ' drawn' : '') : '', attr: ' data-uid="' + inst.uid + '"', style: 'left:' + Math.round(i * step) + 'px;' + (f && wait > 0 ? 'animation-delay:' + wait + 'ms;' : '') });
+	}).join('');
 }
 function renderDiscardPile() {
 	var el = $('discardPile'), ds = G.players.me.discard, n = ds.length;
@@ -148,7 +151,7 @@ function renderHandPanel() {
 	var hand = G.players.me.hand;
 	$('handCount').textContent = hand.length + ' 张';
 	$('handCards').innerHTML = hand.map(function (inst) {
-		return '<div class="hc' + (selUid === inst.uid ? ' selected' : '') + '" data-uid="' + inst.uid + '">' + cardHTML(R.def(inst)) + capHTML(R.def(inst)) + '</div>';
+		return '<div class="hc' + (selUid === inst.uid ? ' selected' : '') + '" data-uid="' + inst.uid + '">' + cardHTML(R.def(inst), { cls: freshOf(inst.uid) ? 'fresh' : '' }) + (freshOf(inst.uid) ? '<i class="newTag">新</i>' : '') + capHTML(R.def(inst)) + '</div>';
 	}).join('');
 	renderDetailBar();
 }
@@ -176,21 +179,69 @@ function markNew(before) {
 	['me', 'ai'].forEach(function (s) { R.fieldUnits(G.players[s]).forEach(function (c) { if (!before[c.uid]) c.isNew = true; }); });
 }
 function fieldUids() { var m = {}; ['me', 'ai'].forEach(function (s) { R.fieldUnits(G.players[s]).forEach(function (c) { m[c.uid] = 1; }); }); return m; }
+// ---- 手牌增减动效：操作前后对比手牌，多出来或少掉的牌自动播放动效 ----
+var fresh = {}, opDelta = null, freshTimer;
+function freshOf(uid) { var f = fresh[uid]; if (f && Date.now() > f.start + 9000) { delete fresh[uid]; return null; } return f; }
+function opDeltaHTML() {
+	if (!opDelta || Date.now() > opDelta.start + 2600) return '';
+	var wait = opDelta.start - Date.now();
+	return '<span class="hdelta' + (opDelta.n < 0 ? ' minus' : '') + '"' + (wait > 0 ? ' style="animation-delay:' + wait + 'ms"' : '') + '>' + (opDelta.n > 0 ? '+' : '') + opDelta.n + '</span>';
+}
+function handSnap() {
+	var pos = {};
+	Array.prototype.forEach.call($('handStack').querySelectorAll('.card[data-uid]'), function (el) { pos[el.dataset.uid] = el; });
+	return { me: G.players.me.hand.map(function (c) { return c.uid; }), ai: G.players.ai.hand.length, pos: pos, actor: G.pending ? G.pending.side : G.turn };
+}
+function handDiff(snap, action) {
+	var now = G.players.me.hand.map(function (c) { return c.uid; }), d = { added: [], removed: [], ai: 0 };
+	now.forEach(function (u) { if (snap.me.indexOf(u) < 0) d.added.push(u); });
+	// 自己打出的那张牌不算"被移走"，它有自己的上场动效
+	snap.me.forEach(function (u) { if (now.indexOf(u) < 0 && !(action.type === 'play' && action.uid === u)) d.removed.push({ uid: u, el: snap.pos[u] }); });
+	d.ai = G.players.ai.hand.length - snap.ai + (action.type === 'play' && snap.actor === 'ai' ? 1 : 0);
+	return d;
+}
+function floatTip(text, cls, wait) {
+	var el = document.createElement('div');
+	el.className = 'handTip ' + cls; el.textContent = text; el.style.animationDelay = wait + 'ms';
+	$('app').appendChild(el);
+	setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, wait + 2000);
+}
+function playHandFx(d, wait) {
+	if (d.removed.length) {
+		var c = $('handStack');
+		d.removed.forEach(function (r) {
+			if (!r.el) return;
+			var g = r.el.cloneNode(true); g.classList.remove('fresh', 'drawn'); g.classList.add('ghost'); g.removeAttribute('data-uid'); g.style.animationDelay = '';
+			c.appendChild(g); setTimeout(function () { if (g.parentNode) g.parentNode.removeChild(g); }, 850);
+		});
+		floatTip('-' + d.removed.length + ' 张手牌', 'minus', d.added.length ? 500 : 0);
+	}
+	if (d.added.length) floatTip('+' + d.added.length + ' 张手牌', 'plus', wait);
+	if (d.added.length || d.removed.length) {
+		var n = $('meHandN');
+		if (n) { n.style.animationDelay = wait + 'ms'; n.classList.add('bump'); }
+		clearTimeout(freshTimer); freshTimer = setTimeout(function () { if (G && G.phase !== 'over') { renderHandFan(); if ($('handPanel').classList.contains('open')) renderHandPanel(); } }, wait + 9100);
+	}
+}
 function doAct(action) {
-	var before = fieldUids(), rounds = G.roundScores.length;
+	var before = fieldUids(), rounds = G.roundScores.length, snap = handSnap();
 	try { R.act(G, action); } catch (e) { toast(e.message); return false; }
 	markNew(before);
-	afterChange(rounds);
+	var d = handDiff(snap, action), wait = G.roundScores.length > rounds ? 2000 : 0;   // 换局时等横幅消失再播放
+	d.added.forEach(function (u) { fresh[u] = { start: Date.now() + wait }; });
+	opDelta = d.ai ? { n: d.ai, start: Date.now() + wait } : null;
+	afterChange(rounds, d);
+	playHandFx(d, wait);
 	return true;
 }
-function afterChange(roundsBefore) {
+function afterChange(roundsBefore, d) {
 	// 把引擎的记录变成提示
 	for (; logSeen < G.log.length; logSeen++) { var e = G.log[logSeen]; if (!/^第 \d 局/.test(e.text) && e.text.indexOf('对局结束') < 0) toast(e.text); }
 	var delay = 900;
 	if (G.roundScores.length > roundsBefore) {
 		var rs = G.roundScores[G.roundScores.length - 1];
-		banner('第 ' + G.roundScores.length + ' 局 ' + (rs.winner === 'me' ? '你赢了' : rs.winner === 'ai' ? '你输了' : '平局'), '你 ' + rs.me + ' : ' + rs.ai + ' 对手');
-		toastQueue = []; closePanel(); closeList(); delay = 2300;   // 局结算时清掉排队中的提示，避免盖在横幅上
+		banner('第 ' + G.roundScores.length + ' 局 ' + (rs.winner === 'me' ? '你赢了' : rs.winner === 'ai' ? '你输了' : '平局'), '你 ' + rs.me + ' : ' + rs.ai + ' 对手' + (G.phase !== 'over' && d && d.added.length ? '<br><span class="rb3">新的一局，你抽了 ' + d.added.length + ' 张牌</span>' : ''));
+		toastQueue = []; closePanel(); closeList(); delay = d && d.added.length ? 3200 : 2300;   // 局结算时清掉排队中的提示，避免盖在横幅上
 	}
 	syncPendingUI();
 	render();
@@ -465,18 +516,19 @@ $('dkStart').addEventListener('click', function () {
 function startGame(me, ai) {
 	clearTimeout(aiTimer); toastQueue = [];
 	G = R.newGame({ seed: (Date.now() & 0x7fffffff) || 1, me: me, ai: ai });
-	logSeen = 0; selUid = null;
+	logSeen = 0; selUid = null; fresh = {}; opDelta = null; mulNew = null;
 	closePanel(); closeList(); hidePrompt(); $('endScreen').classList.remove('show');
 	var guard = 0; while (!G.players.ai.kept && guard++ < 5) R.act(G, AI.choose(G, 'ai', level));   // 对手先换好牌
 	render(); renderMulligan();
 	$('mulligan').classList.remove('hide');
 }
+var mulNew = null;
 function renderMulligan() {
 	var P = G.players.me;
 	$('mulSub').innerHTML = '这是你的起手 10 张牌。<b>点一张不想要的牌</b>，把它换成牌库里的另一张。<br>还可以换 <b>' + P.mulligans + '</b> 张；不想换就直接开始。' + '<br>对手：' + leaderDef('ai').name + '（' + FACTION_DEFS[G.players.ai.faction].name + '）';
 	$('mulGrid').innerHTML = P.hand.map(function (inst) {
 		var c = R.def(inst), names = describeCard(c).names;
-		return '<div class="dk-cell' + (isHeroDef(c) ? ' hero' : '') + (c.kind !== 'unit' ? ' sp' : '') + '" data-uid="' + inst.uid + '"><div class="dk-art" style="' + artStyle(c, 'sm') + '">' + artName(c)
+		return '<div class="dk-cell' + (inst.uid === mulNew ? ' swapped' : '') + (isHeroDef(c) ? ' hero' : '') + (c.kind !== 'unit' ? ' sp' : '') + '" data-uid="' + inst.uid + '"><div class="dk-art" style="' + artStyle(c, 'sm') + '">' + artName(c)
 			+ (c.kind === 'unit' ? '<div class="dpw">' + c.power + '</div>' : '') + iconsHTML(c) + '</div><div class="dn">' + c.name + '</div><div class="da">' + names.join('·') + '</div></div>';
 	}).join('');
 }
@@ -491,7 +543,9 @@ function beginPlay() {
 $('mulGrid').addEventListener('click', function (e) {
 	var el = e.target.closest('.dk-cell'); if (!el || !G || G.phase !== 'mulligan') return;
 	if (G.players.me.mulligans <= 0) { toast('换牌次数已用完'); return; }
+	var had = G.players.me.hand.map(function (c) { return c.uid; });
 	R.act(G, { type: 'mulligan', side: 'me', uid: parseInt(el.dataset.uid) });
+	mulNew = null; G.players.me.hand.forEach(function (c) { if (had.indexOf(c.uid) < 0) mulNew = c.uid; });
 	renderMulligan();
 	if (G.players.me.kept) setTimeout(beginPlay, 700);
 });

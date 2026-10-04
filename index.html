@@ -436,6 +436,27 @@ body{display:flex;flex-direction:column}
 #roundBanner .rb{display:inline-block;background:rgba(10,9,8,.92);border:1px solid var(--gold);border-radius:14px;padding:14px 26px}
 #roundBanner .rb1{font-size:20px;font-weight:bold;color:var(--gold);letter-spacing:3px}
 #roundBanner .rb2{font-size:13px;color:var(--ink);margin-top:4px}
+/* 手牌增减动效 */
+#handStack .card.fresh{transform:translateY(-14px);border-color:var(--gold);box-shadow:0 0 10px rgba(240,216,96,.95),0 0 3px rgba(240,216,96,.9) inset}
+#handStack .card.drawn{animation:drawIn .6s cubic-bezier(.2,.9,.3,1.2) backwards}
+@keyframes drawIn{0%{transform:translateY(-150px) scale(1.5) rotate(-8deg);opacity:0}70%{transform:translateY(-10px) scale(1.12);opacity:1}100%{transform:translateY(-14px);opacity:1}}
+#handStack .card.ghost{animation:handOut .8s ease forwards;pointer-events:none;z-index:5;box-shadow:0 0 10px rgba(224,80,70,.9);border-color:#e05046}
+@keyframes handOut{0%{transform:none;opacity:1}30%{transform:translateY(-22px) scale(1.08);opacity:1}100%{transform:translateY(-70px) scale(.6);opacity:0}}
+.handTip{position:absolute;left:10px;bottom:calc(env(safe-area-inset-bottom) + 168px);z-index:30;font-size:15px;font-weight:bold;letter-spacing:1px;padding:5px 14px;border-radius:16px;background:rgba(10,9,8,.92);pointer-events:none;animation:tipUp 1.9s ease both}
+.handTip.plus{color:var(--gold);border:1px solid var(--gold)}
+.handTip.minus{color:#ff8a7a;border:1px solid #e05046}
+@keyframes tipUp{0%{transform:translateY(16px) scale(.8);opacity:0}15%{transform:translateY(0) scale(1.1);opacity:1}25%{transform:scale(1)}80%{transform:translateY(-8px);opacity:1}100%{transform:translateY(-26px);opacity:0}}
+#meHandN.bump{display:inline-block;animation:numBump .7s ease 2 backwards;color:var(--gold)}
+@keyframes numBump{0%,100%{transform:scale(1)}40%{transform:scale(1.9)}}
+.hud .it .hdelta{position:absolute;left:50%;top:100%;margin-left:-14px;width:28px;text-align:center;font-size:11px;line-height:1;font-weight:bold;color:var(--gold);animation:deltaPop 2.4s ease both;pointer-events:none}
+.hud .it .hdelta.minus{color:#ff8a7a}
+@keyframes deltaPop{0%{transform:translateY(8px) scale(.6);opacity:0}12%{transform:translateY(0) scale(1.4);opacity:1}25%{transform:scale(1)}80%{opacity:1}100%{transform:translateY(-8px);opacity:0}}
+#handCards .hc{position:relative}
+#handCards .hc .card.fresh{border-color:var(--gold);box-shadow:0 0 12px rgba(240,216,96,.9)}
+#handCards .hc .newTag{position:absolute;right:-3px;top:-6px;z-index:6;font-style:normal;font-size:11px;font-weight:bold;line-height:18px;width:18px;text-align:center;border-radius:50%;background:var(--gold);color:#231a05;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+#roundBanner .rb3{display:inline-block;margin-top:6px;font-size:13px;color:var(--gold-soft)}
+#mulGrid .dk-cell.swapped .dk-art{animation:swapIn .7s ease;border-color:var(--gold);box-shadow:0 0 12px rgba(240,216,96,.9)}
+@keyframes swapIn{0%{transform:rotateY(90deg) scale(.8);opacity:0}60%{transform:rotateY(0) scale(1.1);opacity:1}100%{transform:none}}
 </style>
 </head>
 <body>
