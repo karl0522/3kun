@@ -3362,7 +3362,7 @@ var sanguo_card_dict = [
   },
   {
     "id": 241,
-    "name": "侯选",
+    "name": "侯成",
     "orig": "狮鹫",
     "faction": "汉廷中立",
     "deck": "hanting",
@@ -3372,7 +3372,7 @@ var sanguo_card_dict = [
     "ability": "hero",
     "keyword": "猛将、灵活【吕布八健将】",
     "rarity": "bronze",
-    "filename": "侯选"
+    "filename": "侯成"
   },
   {
     "id": 242,
