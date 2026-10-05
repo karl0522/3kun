@@ -266,7 +266,8 @@ var CONT = {
 		var P = state.players[pend.side], back = P.rows[sel[0]].filter(function (c) { return !R.isHero(c); });
 		P.rows[sel[0]] = P.rows[sel[0]].filter(R.isHero);
 		back.forEach(function (c) { c.mod = 0; delete c.base; if (!c.copy) P.hand.push(c); });
-		R.log(state, pend.side, '隐忍：收回 ' + back.length + ' 张单位');
+		var n = R.draw(state, pend.side, 1);
+		R.log(state, pend.side, '隐忍：收回 ' + back.length + ' 张单位，抽 ' + n + ' 张牌');
 	},
 	zhiheng: function (state, pend, sel) {
 		var P = state.players[pend.side], c = R.takeByUid(P.hand, sel[0]);
@@ -279,6 +280,8 @@ var CONT = {
 		var r = R.enterField(state, pend.side, c);
 		R.log(state, pend.side, '撒豆成兵：' + nm(c) + ' 上场');
 		musterPull(state, pend.side, c, r);
+		var n = R.draw(state, pend.side, 1);
+		if (n) R.log(state, pend.side, '撒豆成兵：抽 ' + n + ' 张牌');
 	},
 	xiliang: function (state, pend, sel) {
 		var P = state.players[pend.side], rep = byUid(P.discard, sel[0]), name = nm(rep);
