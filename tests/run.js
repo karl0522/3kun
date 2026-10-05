@@ -47,8 +47,8 @@ function inZone(s, side, zone, name) { return s.players[side][zone].filter(c => 
 
 // ==================== 战力计算 ====================
 test('基础战力与每排合计', () => {
-	const s = game(); put(s, 'me', 'close', '蜀汉重步'); put(s, 'me', 'ranged', '蜀汉弓手');
-	eq(R.total(s, 'me'), P('蜀汉重步') + P('蜀汉弓手'));
+	const s = game(); put(s, 'me', 'close', '蜀汉重步兵'); put(s, 'me', 'ranged', '蜀汉弓手');
+	eq(R.total(s, 'me'), P('蜀汉重步兵') + P('蜀汉弓手'));
 });
 test('同袍：同排同名 2 张各 ×2', () => {
 	const s = game(); const a = put(s, 'me', 'close', '白耳骑兵'); put(s, 'me', 'close', '白耳骑兵');
@@ -59,18 +59,18 @@ test('同袍：不同排不生效', () => {
 	eq(pw(s, 'me', a), P('蜀汉弓手'));
 });
 test('士气：同排其他单位 +1，自己不加，对猛将也生效', () => {
-	const s = game(); const m = put(s, 'me', 'close', '蜀精锐步兵'); const u = put(s, 'me', 'close', '蜀汉重步'); const h = put(s, 'me', 'close', '魏延');
-	eq(pw(s, 'me', m), P('蜀精锐步兵')); eq(pw(s, 'me', u), P('蜀汉重步') + 1); eq(pw(s, 'me', h), P('魏延') + 1);
+	const s = game(); const m = put(s, 'me', 'close', '蜀精锐步兵'); const u = put(s, 'me', 'close', '蜀汉重步兵'); const h = put(s, 'me', 'close', '魏延');
+	eq(pw(s, 'me', m), P('蜀精锐步兵')); eq(pw(s, 'me', u), P('蜀汉重步兵') + 1); eq(pw(s, 'me', h), P('魏延') + 1);
 });
 test('天气：非猛将变 1，猛将不变', () => {
-	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步'); const h = put(s, 'me', 'close', '魏延');
+	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步兵'); const h = put(s, 'me', 'close', '魏延');
 	playName(s, 'ai', '寒潮');
 	eq(pw(s, 'me', u), 1); eq(pw(s, 'me', h), P('魏延'));
 });
 test('战鼓：非猛将 ×2，之后上场的也算，猛将不翻倍', () => {
-	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步'); const h = put(s, 'me', 'close', '魏延');
+	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步兵'); const h = put(s, 'me', 'close', '魏延');
 	playName(s, 'me', '战鼓'); answer(s, 'close');
-	eq(pw(s, 'me', u), P('蜀汉重步') * 2); eq(pw(s, 'me', h), P('魏延'));
+	eq(pw(s, 'me', u), P('蜀汉重步兵') * 2); eq(pw(s, 'me', h), P('魏延'));
 	const u2 = put(s, 'me', 'close', '蜀汉盾兵'); eq(pw(s, 'me', u2), P('蜀汉盾兵') * 2);
 });
 test('战鼓：已有战鼓的排不能再选', () => {
@@ -97,22 +97,22 @@ test('卧底：放到对手半场，自己抽 2 张', () => {
 	eq(onField(s, 'me', '曹魏细作').length, 1); eq(onField(s, 'ai', '曹魏细作').length, 0); eq(s.players.ai.hand.length, 2);
 });
 test('死士：手牌和牌库里的同名牌一并上场', () => {
-	const s = game({ me: 'huangjin' }); put(s, 'me', 'deck', '黄巾力士'); put(s, 'me', 'deck', '蜀汉重步');
+	const s = game({ me: 'huangjin' }); put(s, 'me', 'deck', '黄巾力士'); put(s, 'me', 'deck', '蜀汉重步兵');
 	playName(s, 'me', '黄巾力士');
 	eq(onField(s, 'me', '黄巾力士').length, 2); eq(s.players.me.deck.length, 1);
 });
 test('归阵：从弃牌堆选非猛将上场，猛将不在可选范围', () => {
-	const s = game(); const d = put(s, 'me', 'discard', '蜀汉重步'); const h = put(s, 'me', 'discard', '魏延');
+	const s = game(); const d = put(s, 'me', 'discard', '蜀汉重步兵'); const h = put(s, 'me', 'discard', '魏延');
 	playName(s, 'me', '蜀汉军医');
 	ok(s.pending.cands.includes(d.uid)); ok(!s.pending.cands.includes(h.uid));
 	answer(s, d.uid);
-	eq(onField(s, 'me', '蜀汉重步').length, 1); eq(s.turn, 'ai', '选完后轮到对手');
+	eq(onField(s, 'me', '蜀汉重步兵').length, 1); eq(s.turn, 'ai', '选完后轮到对手');
 });
 test('归阵：弃牌堆没有可选单位时直接结束出牌', () => {
 	const s = game(); playName(s, 'me', '蜀汉军医'); eq(s.pending, null); eq(s.turn, 'ai');
 });
 test('归阵：复活出来的单位不触发自己的技能', () => {
-	const s = game(); const m = put(s, 'me', 'discard', '蜀汉军医'); put(s, 'me', 'discard', '蜀汉重步');
+	const s = game(); const m = put(s, 'me', 'discard', '蜀汉军医'); put(s, 'me', 'discard', '蜀汉重步兵');
 	playName(s, 'me', '蜀汉军医'); answer(s, m.uid);
 	eq(s.pending, null, '被复活的军医不应再触发归阵');
 });
@@ -151,8 +151,8 @@ test('借东风：牌库没有天气牌时直接清除天气', () => {
 	const s = game(); playName(s, 'ai', '寒潮'); playName(s, 'me', '诸葛亮'); eq(s.pending, null); eq(s.weather.close, null);
 });
 test('暴政（董卓）：己方同排其他非猛将 -1', () => {
-	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步'); const h = put(s, 'me', 'close', '魏延');
-	playName(s, 'me', '董卓'); eq(pw(s, 'me', u), P('蜀汉重步') - 1); eq(pw(s, 'me', h), P('魏延'));
+	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步兵'); const h = put(s, 'me', 'close', '魏延');
+	playName(s, 'me', '董卓'); eq(pw(s, 'me', u), P('蜀汉重步兵') - 1); eq(pw(s, 'me', h), P('魏延'));
 });
 test('离间（貂蝉）：只能选战力 ≤6 的非猛将，转投后留在原排', () => {
 	const s = game(); const small = put(s, 'ai', 'close', '曹魏重骑'); const big = put(s, 'ai', 'siege', '曹魏冲车'); const h = put(s, 'ai', 'close', '典韦');
@@ -168,14 +168,14 @@ test('幻术（左慈）：变成对手最强非猛将的战力', () => {
 
 // ==================== 特殊牌与天气 ====================
 test('招降：收回己方非猛将，场上没有非猛将时不能打出', () => {
-	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步'); put(s, 'me', 'close', '魏延');
+	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步兵'); put(s, 'me', 'close', '魏延');
 	playName(s, 'me', '招降'); ok(s.pending.cands.length === 1); answer(s, u.uid);
-	eq(inZone(s, 'me', 'hand', '蜀汉重步'), 1);
+	eq(inZone(s, 'me', 'hand', '蜀汉重步兵'), 1);
 	const s2 = game(); put(s2, 'me', 'close', '魏延'); const d = put(s2, 'me', 'hand', '招降'); s2.turn = 'me';
 	throws(() => R.act(s2, { type: 'play', uid: d.uid }));
 });
 test('烽火燎原：全场并列最高的非猛将全部消灭，不分排、无门槛', () => {
-	const s = game(); put(s, 'me', 'close', '蜀汉重步'); put(s, 'ai', 'close', '曹魏重骑'); put(s, 'ai', 'ranged', '曹魏弓兵');
+	const s = game(); put(s, 'me', 'close', '蜀汉重步兵'); put(s, 'ai', 'close', '曹魏重骑'); put(s, 'ai', 'ranged', '曹魏弓兵');
 	playName(s, 'me', '烽火燎原');
 	eq(R.fieldUnits(s.players.me).length, 0); eq(onField(s, 'ai', '曹魏重骑').length, 0); eq(onField(s, 'ai', '曹魏弓兵').length, 1);
 });
@@ -197,7 +197,7 @@ test('蛮巫祭礼：该排死士 ×2，非死士不变', () => {
 // ==================== 领袖技能 ====================
 function useLeader(s, side) { s.turn = side; R.act(s, { type: 'leader' }); }
 test('领袖：整场一次，使用后不消耗出牌机会', () => {
-	const s = game(); put(s, 'me', 'discard', '蜀汉重步');
+	const s = game(); put(s, 'me', 'discard', '蜀汉重步兵');
 	useLeader(s, 'me'); answer(s, s.pending.cands[0]);
 	eq(s.turn, 'me', '用完领袖技仍是我的回合'); ok(s.players.me.leaderUsed);
 	throws(() => R.act(s, { type: 'leader' }));
@@ -210,7 +210,7 @@ test('仁德（刘备）：弃牌堆选单位回手牌，可选猛将', () => {
 	ok(s.pending.cands.includes(h.uid)); answer(s, h.uid); eq(inZone(s, 'me', 'hand', '魏延'), 1);
 });
 test('相父辅政（刘禅）：牌库选同袍单位上场', () => {
-	const s = game({ meLeader: '刘禅' }); const b = put(s, 'me', 'deck', '白耳骑兵'); put(s, 'me', 'deck', '蜀汉重步');
+	const s = game({ meLeader: '刘禅' }); const b = put(s, 'me', 'deck', '白耳骑兵'); put(s, 'me', 'deck', '蜀汉重步兵');
 	useLeader(s, 'me'); eq(s.pending.cands.length, 1); answer(s, b.uid); eq(onField(s, 'me', '白耳骑兵').length, 1);
 });
 test('挟天子（曹操）：牌库选卧底打出，放到对手半场并抽 2 张', () => {
@@ -261,17 +261,17 @@ test('南蛮再起（孟获）：弃牌堆选最多 2 张南蛮单位上场，�
 // ==================== 阵营被动与对局流程 ====================
 function bothPass(s) { R.act(s, { type: 'pass' }); R.act(s, { type: 'pass' }); }
 test('清场：每局结束单位进弃牌堆，战鼓和天气清除', () => {
-	const s = game(); put(s, 'me', 'close', '蜀汉重步'); playName(s, 'me', '战鼓'); answer(s, 'close'); playName(s, 'ai', '寒潮');
+	const s = game(); put(s, 'me', 'close', '蜀汉重步兵'); playName(s, 'me', '战鼓'); answer(s, 'close'); playName(s, 'ai', '寒潮');
 	s.turn = 'me'; bothPass(s);
-	eq(R.fieldUnits(s.players.me).length, 0); eq(inZone(s, 'me', 'discard', '蜀汉重步'), 1); eq(s.players.me.horn.close, false); eq(s.weather.close, null); eq(s.round, 2);
+	eq(R.fieldUnits(s.players.me).length, 0); eq(inZone(s, 'me', 'discard', '蜀汉重步兵'), 1); eq(s.players.me.horn.close, false); eq(s.weather.close, null); eq(s.round, 2);
 });
 test('每局开始双方各抽 2 张', () => {
-	const s = game(); for (let i = 0; i < 4; i++) { put(s, 'me', 'deck', '蜀汉重步'); put(s, 'ai', 'deck', '曹魏重骑'); }
+	const s = game(); for (let i = 0; i < 4; i++) { put(s, 'me', 'deck', '蜀汉重步兵'); put(s, 'ai', 'deck', '曹魏重骑'); }
 	put(s, 'ai', 'close', '曹魏重骑'); s.turn = 'me'; bothPass(s);
 	eq(s.players.ai.hand.length, 2); eq(s.players.me.hand.length, 2);
 });
 test('蜀汉被动：赢一局额外抽 1 张', () => {
-	const s = game(); for (let i = 0; i < 4; i++) put(s, 'me', 'deck', '蜀汉重步');
+	const s = game(); for (let i = 0; i < 4; i++) put(s, 'me', 'deck', '蜀汉重步兵');
 	put(s, 'me', 'close', '魏延'); s.turn = 'me'; bothPass(s); eq(s.players.me.hand.length, 3);
 });
 test('曹魏被动：平局判胜', () => {
@@ -375,8 +375,8 @@ test('同一个种子重放，结果完全一致', () => {
 	eq(run(), run());
 });
 test('状态可以复制，复制品与原状态互不影响', () => {
-	const s = game(); put(s, 'me', 'close', '蜀汉重步'); const c = R.clone(s);
-	put(c, 'me', 'close', '魏延'); eq(R.total(s, 'me'), P('蜀汉重步')); eq(R.total(c, 'me'), P('蜀汉重步') + P('魏延'));
+	const s = game(); put(s, 'me', 'close', '蜀汉重步兵'); const c = R.clone(s);
+	put(c, 'me', 'close', '魏延'); eq(R.total(s, 'me'), P('蜀汉重步兵')); eq(R.total(c, 'me'), P('蜀汉重步兵') + P('魏延'));
 });
 
 console.log(`通过 ${pass} 项，失败 ${fail} 项`);

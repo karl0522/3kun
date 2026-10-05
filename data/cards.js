@@ -24,7 +24,7 @@ var CARDS = [
 	{id:54, name:"蜀地斥候", faction:"shuhan", kind:"unit", rarity:"bronze", row:"agile", power:4, copies:2, abilities:[], art:"蜀地斥候"},
 	{id:56, name:"蜀攻城匠", faction:"shuhan", kind:"unit", rarity:"bronze", row:"siege", power:4, copies:2, abilities:[], art:"蜀攻城匠"},
 	{id:63, name:"蜀汉轻骑", faction:"shuhan", kind:"unit", rarity:"bronze", row:"agile", power:4, copies:2, abilities:[], art:"蜀汉轻骑"},
-	{id:64, name:"蜀汉重步", faction:"shuhan", kind:"unit", rarity:"bronze", row:"close", power:4, copies:2, abilities:[], art:"蜀汉重步"},
+	{id:64, name:"蜀汉重步兵", faction:"shuhan", kind:"unit", rarity:"bronze", row:"close", power:4, copies:2, abilities:[], art:"蜀汉重步兵"},
 	{id:62, name:"蜀汉弓手", faction:"shuhan", kind:"unit", rarity:"bronze", row:"ranged", power:3, copies:2, abilities:[{k:"bond"}], art:"蜀汉弓手"},
 	{id:137, name:"蜀汉步兵", faction:"shuhan", kind:"unit", rarity:"bronze", row:"close", power:3, copies:2, abilities:[{k:"bond"}], art:"蜀汉步兵"},
 	{id:153, name:"蜀汉连弩手", faction:"shuhan", kind:"unit", rarity:"bronze", row:"ranged", power:3, copies:2, abilities:[{k:"bond"}], art:"蜀汉连弩手"},
