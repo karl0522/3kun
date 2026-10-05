@@ -20,7 +20,7 @@ var CARDS = [
 	{id:51, name:"白耳骑兵", faction:"shuhan", kind:"unit", rarity:"bronze", row:"close", power:6, copies:2, abilities:[{k:"bond"}], art:"白耳骑兵", flavor:"刘备亲卫"},
 	{id:52, name:"蜀汉军医", faction:"shuhan", kind:"unit", rarity:"bronze", row:"close", power:5, copies:2, abilities:[{k:"medic"}], art:"蜀汉军医"},
 	{id:53, name:"无当飞军", faction:"shuhan", kind:"unit", rarity:"bronze", row:"ranged", power:5, copies:2, abilities:[{k:"bond"}], art:"无当飞军", flavor:"南中精锐"},
-	{id:57, name:"蜀精锐步曲", faction:"shuhan", kind:"unit", rarity:"bronze", row:"close", power:5, copies:2, abilities:[{k:"morale"}], art:"蜀精锐步曲"},
+	{id:57, name:"蜀精锐步兵", faction:"shuhan", kind:"unit", rarity:"bronze", row:"close", power:5, copies:2, abilities:[{k:"morale"}], art:"蜀精锐步兵"},
 	{id:54, name:"蜀地斥候", faction:"shuhan", kind:"unit", rarity:"bronze", row:"agile", power:4, copies:2, abilities:[], art:"蜀地斥候"},
 	{id:56, name:"蜀攻城匠", faction:"shuhan", kind:"unit", rarity:"bronze", row:"siege", power:4, copies:2, abilities:[], art:"蜀攻城匠"},
 	{id:63, name:"蜀汉轻骑", faction:"shuhan", kind:"unit", rarity:"bronze", row:"agile", power:4, copies:2, abilities:[], art:"蜀汉轻骑"},
@@ -129,7 +129,7 @@ var CARDS = [
 	{id:101, name:"黄巾游骑", faction:"huangjin", kind:"unit", rarity:"bronze", row:"close", power:2, copies:2, abilities:[{k:"muster"}], art:"黄巾游骑"},
 	{id:104, name:"黄巾流民", faction:"huangjin", kind:"unit", rarity:"bronze", row:"close", power:2, copies:2, abilities:[], art:"黄巾流民"},
 	{id:106, name:"黄巾河兵", faction:"huangjin", kind:"unit", rarity:"bronze", row:"agile", power:2, copies:2, abilities:[], art:"黄巾河兵"},
-	{id:195, name:"黄巾斥侯", faction:"huangjin", kind:"unit", rarity:"bronze", row:"agile", power:2, copies:1, abilities:[], art:"黄巾斥侯"},
+	{id:195, name:"黄巾斥候", faction:"huangjin", kind:"unit", rarity:"bronze", row:"agile", power:2, copies:1, abilities:[], art:"黄巾斥候"},
 	{id:107, name:"黄巾哨探", faction:"huangjin", kind:"unit", rarity:"bronze", row:"agile", power:1, copies:2, abilities:[], art:"黄巾哨探"},
 
 	// ==================== 群雄 ====================
@@ -192,7 +192,7 @@ var CARDS = [
 	{id:49, name:"于吉", faction:"neutral", kind:"unit", rarity:"gold", row:"ranged", power:10, copies:1, abilities:[{k:"hero"}], art:"于吉", flavor:"太平道，符水治病"},
 	{id:50, name:"说书人", faction:"neutral", kind:"unit", rarity:"gold", row:"ranged", power:9, copies:1, abilities:[{k:"hero"}, {k:"morale"}], art:"说书人"},
 	{id:16, name:"皇甫嵩", faction:"neutral", kind:"unit", rarity:"silver", row:"close", power:8, copies:1, abilities:[], art:"皇甫嵩"},
-	{id:17, name:"朱隽", faction:"neutral", kind:"unit", rarity:"silver", row:"close", power:7, copies:1, abilities:[], art:"朱隽"},
+	{id:17, name:"朱儁", faction:"neutral", kind:"unit", rarity:"silver", row:"close", power:7, copies:1, abilities:[], art:"朱儁"},
 	{id:18, name:"卢植", faction:"neutral", kind:"unit", rarity:"silver", row:"ranged", power:5, copies:1, abilities:[{k:"morale"}], art:"卢植"},
 	{id:129, name:"汉献帝", faction:"neutral", kind:"unit", rarity:"silver", row:"ranged", power:5, copies:1, abilities:[{k:"morale"}], art:"汉献帝", flavor:"汉室天子"},
 	{id:130, name:"华佗", faction:"neutral", kind:"unit", rarity:"silver", row:"ranged", power:5, copies:1, abilities:[{k:"medic"}], art:"华佗", flavor:"外科圣手"},

@@ -59,8 +59,8 @@ test('同袍：不同排不生效', () => {
 	eq(pw(s, 'me', a), P('蜀汉弓手'));
 });
 test('士气：同排其他单位 +1，自己不加，对猛将也生效', () => {
-	const s = game(); const m = put(s, 'me', 'close', '蜀精锐步曲'); const u = put(s, 'me', 'close', '蜀汉重步'); const h = put(s, 'me', 'close', '魏延');
-	eq(pw(s, 'me', m), P('蜀精锐步曲')); eq(pw(s, 'me', u), P('蜀汉重步') + 1); eq(pw(s, 'me', h), P('魏延') + 1);
+	const s = game(); const m = put(s, 'me', 'close', '蜀精锐步兵'); const u = put(s, 'me', 'close', '蜀汉重步'); const h = put(s, 'me', 'close', '魏延');
+	eq(pw(s, 'me', m), P('蜀精锐步兵')); eq(pw(s, 'me', u), P('蜀汉重步') + 1); eq(pw(s, 'me', h), P('魏延') + 1);
 });
 test('天气：非猛将变 1，猛将不变', () => {
 	const s = game(); const u = put(s, 'me', 'close', '蜀汉重步'); const h = put(s, 'me', 'close', '魏延');
@@ -80,7 +80,7 @@ test('战鼓：已有战鼓的排不能再选', () => {
 	ok(!s.pending.cands.includes('close'));
 });
 test('计算顺序：天气置 1 → 同袍 ×2 → 士气 +1 → 战鼓 ×2', () => {
-	const s = game(); const a = put(s, 'me', 'close', '白耳骑兵'); put(s, 'me', 'close', '白耳骑兵'); put(s, 'me', 'close', '蜀精锐步曲');
+	const s = game(); const a = put(s, 'me', 'close', '白耳骑兵'); put(s, 'me', 'close', '白耳骑兵'); put(s, 'me', 'close', '蜀精锐步兵');
 	playName(s, 'ai', '寒潮'); s.players.me.horn.close = true;
 	eq(pw(s, 'me', a), ((1 * 2) + 1) * 2);
 });
